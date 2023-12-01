@@ -1,0 +1,4314 @@
+%
+%\documentclass[bj,numbers]{imsart}% uncomment this for numbers citation
+\documentclass[bj,authoryear,noshowframe]{imsart}
+
+%% Packages
+% \usepackage{}
+
+\startlocaldefs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Uncomment next line to change            %%
+%% the type of equation numbering           %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\numberwithin{equation}{section}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% For Axiom, Claim, Corollary, Hypothesis, %%
+%% Lemma, Theorem, Proposition              %%
+%% use \theoremstyle{plain}                 %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{axiom}{Axiom}
+\newtheorem{claim}[axiom]{Claim}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% For Assumption, Definition, Example,     %%
+%% Notation, Property, Remark, Fact         %%
+%% use \theoremstyle{remark}                %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{remark}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem*{example}{Example}
+\newtheorem*{fact}{Fact}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Please put your definitions here:        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{caption}
+% \usepackage{enumerate}
+\usepackage{subcaption}
+\usepackage{float}
+
+\usepackage{graphicx}
+% \usepackage{color}
+
+\usepackage{tikz}
+\usetikzlibrary{automata,topaths}
+\usetikzlibrary{shapes}
+\usetikzlibrary{plotmarks}
+
+\usepackage{accents} 
+
+\let\Horig\H
+
+\newcommand{\IP}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\bone}{{\bf 1}}
+
+\def\P{\mathbb{P}}
+\def\real{{\mathord{\mathbb R}}}
+
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{corollary}[prop]{Corollary}
+\newtheorem{thm}[prop]{Theorem}
+\newtheorem{remark}[prop]{Remark}
+\newtheorem{assumption}{Assumption}[section]
+
+\usetikzlibrary{arrows,automata,shapes,positioning,decorations.pathmorphing,snakes}
+
+\tikzset{snake it/.style={-stealth,
+decoration={snake, 
+    amplitude = .4mm,
+    segment length = 2mm,
+    post length=0.9mm},decorate}}
+
+\usetikzlibrary{matrix,calc}
+
+\newcommand{\convexpath}[2]{
+[   
+    create hullnodes/.code={
+        \global\edef\namelist{#1}
+        \foreach [count=\counter] \nodename in \namelist {
+            \global\edef\numberofnodes{\counter}
+            \node at (\nodename) [draw=none,name=hullnode\counter] {};
+        }
+        \node at (hullnode\numberofnodes) [name=hullnode0,draw=none] {};
+        \pgfmathtruncatemacro\lastnumber{\numberofnodes+1}
+        \node at (hullnode1) [name=hullnode\lastnumber,draw=none] {};
+    },
+    create hullnodes
+]
+($(hullnode1)!#2!-90:(hullnode0)$)
+\foreach [
+    evaluate=\currentnode as \previousnode using \currentnode-1,
+    evaluate=\currentnode as \nextnode using \currentnode+1
+    ] \currentnode in {1,...,\numberofnodes} {
+-- ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode)$)
+  let \p1 = ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode) - (hullnode\currentnode)$),
+    \n1 = {atan2(\y1,\x1)},
+    \p2 = ($(hullnode\currentnode)!#2!90:(hullnode\nextnode) - (hullnode\currentnode)$),
+    \n2 = {atan2(\y2,\x2)},
+    \n{delta} = {-Mod(\n1-\n2,360)}
+  in 
+    {arc [start angle=\n1, delta angle=\n{delta}, radius=#2]}
+}
+-- cycle
+}
+
+\tikzset{hide labels/.style={every label/.append style={text opacity=0}}}
+\endlocaldefs
+
+\begin{document}
+
+\begin{frontmatter}
+\title{Normal approximation of subgraph counts in the random-connection model}
+%\title{A sample article title with some additional note\thanksref{t1}}
+\runtitle{Normal approximation of subgraph counts in the random-connection model}
+%\thankstext{T1}{A sample additional note to the title.}
+
+\begin{aug}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ORCID can be inserted by command:         %%
+%% \orcid{0000-0000-0000-0000}               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\author[A]{\inits{F.}\fnms{Qingwei}~\snm{Liu}\ead[label=e1]{qingwei.liu@ntu.edu.sg}\orcid{0000-0001-9485-950X}}
+\author[B]{\inits{S.}\fnms{Nicolas}~\snm{Privault}\ead[label=e2]{nprivault@ntu.edu.sg}\orcid{0000-0003-4148-8543}} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Addresses                                %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\address[A]{Division of Mathematical Sciences, School of Physical and Mathematical Sciences, Nanyang Technological University, 21 Nanyang Link, Singapore 637371\printead[presep={,\ }]{e1}}
+
+\address[B]{Division of Mathematical Sciences, School of Physical and Mathematical Sciences, Nanyang Technological University, 21 Nanyang Link, Singapore 637371\printead[presep={,\ }]{e2}}
+\end{aug}
+
+\begin{abstract}
+  This paper derives normal approximation results for subgraph counts written as multiparameter stochastic integrals in a random-connection model based on a Poisson point process. By combinatorial arguments we express the cumulants of general subgraph counts using sums over connected partition diagrams, after cancellation of terms obtained by M\"obius inversion. Using the Statulevi\v{c}ius condition, we deduce convergence rates in the Kolmogorov distance by studying the growth of subgraph count cumulants as the intensity of the underlying Poisson point process tends to infinity. Our analysis covers general subgraphs in the dilute and full random graph regimes, and tree-like subgraphs in the sparse random graph regime.
+\end{abstract}
+
+\begin{keyword}
+  \kwd{cumulant method}
+  \kwd{Kolmogorov distance}
+  \kwd{normal approximation}
+  \kwd{Poisson point process}
+  \kwd{Random-connection model} 
+  \kwd{random graphs}
+  \kwd{subgraph count}
+\end{keyword}
+
+\end{frontmatter}
+
+\vspace{-0.1cm}
+\section{Introduction}
+\vspace{-0.1cm}
+This paper treats the asymptotic behavior of
+ random subgraph counts in the random-connection model (RCM), 
+ which is used to model physical systems in e.g. wireless networks, % \cite{georgiou2013,georgiou2015,georgiou2016,kartungiles2016},
+ complex networks, % \cite{mulder2018,boguna2020},
+ and statistical mechanics. % \cite{bianconi2001,betz2008,biskup2015}, 
+% or cosmology \cite{cunningham2017,fountoulakis2020}. 
+ Our approach relies on the study of cumulant growth rates
+ as the intensity of the underlying Poisson point process tends to infinity. 
+ 
+% \medskip 
+
+The distributional approximation of subgraph counts has attracted
+significant interest in the random graph literature. 
+ In \cite{rucinski}, conditions for the asymptotic normality
+ of renormalized subgraph counts have been obtained
+ in the Erd{\H o}s-R\'enyi random graph model \cite{ER,G}. 
+% $\mathbb{G}_n(p_n)$
+% that are isomorphic to a fixed graph $G$ obtained
+ In \cite[Chapter~3]{penrosebk}, non-quantitative central limit theorems have been obtained for subgraph and component counts
+ on random geometric graphs.
+   Rates of normal convergence with respect to the Kolmogorov distance
+   have been obtained for certain random
+   functionals on random geometric graphs in
+   \cite{schulte} using Poisson U-statistics,
+   see also \cite{lachiezerey4} for the use of stabilizing functionals.
+ 
+% \medskip 
+ 
+ In the Erd{\H o}s-R\'enyi setting,
+ those results have been made more precise in \cite{BKR} by
+ the derivation of convergence rates in the Wasserstein distance via the
+ Stein method. 
+ They have also been strengthened in \cite{reichenbachsAoP} 
+ using the Kolmogorov distance in the case of triangle counts,
+ and in \cite{PS2} in the case of general subgraphs $G$.
+ The case of triangles has also been treated in \cite{roellin2}
+ by the {S}tein-{T}ikhomirov method, which has been extended 
+ to general subgraphs in \cite{rednos}.    
+ In \cite{khorunzhiy}, the counts of line ($X$-model) and cycles ($Y$-model) 
+ in discrete Erd{\H o}s-R\'enyi models 
+ have been analyzed via the asymptotic behavior of their cumulants.
+ 
+% \medskip 
+  
+ The random connection-model is a natural generalization of the % random geometric graph and
+ Erd\H os-R\'enyi random graph in which vertices are randomly located
+ and can be connected
+ with location-dependent probabilities
+ $H(x,y)\in [0,1]$.
+%\textcolor{purple}{ In the (deterministic) random-connection model with $\{0,1\}$-valued connection function $H(x,y)$, a Central Limit Theorem has been obtained in \cite{can2022} under a weakly stabilizing condition, cf. \cite{penrose01}, plus some moment conditions. As mentioned in \cite[Remark~2.5]{can2022}, the stabilizing condition appeared in \cite{penrose05,lachiezerey4} does not apply to subgraph counts with general $[0,1]$-valued random connection function. }
+ Recently, a Central Limit Theorem has been derived in \cite{can2022} for the counts of induced subgraphs in the random-connection model under certain stabilization and moment conditions. 
+ Obtaining normal approximation error bounds 
+ in the random-connection model
+ with a general $[0,1]$-valued random connection function 
+ is more difficult due to the additional layer of complexity coming from
+ the randomness of vertex locations.
+% RCM turns out to be much harder, despite the fruitful studies of random geometric graph and Erd\H os-R\'enyi model.
+ 
+% \medskip 
+   
+ Regarding convergence rates, in \cite{LNS21},
+ a central limit theorem and Berry-Esseen convergence rates have
+ been presented and applied to the number of components isomorphic
+ to a given finite connected graph in the random-connection model,
+ together with a study of ﬁrst moments and covariances.
+% However, those results were not applied to subgraph counting. 
+ In \cite{zhangzs}, Berry-Esseen convergence rates have
+ been obtained for subgraph counts
+ in the binomial RCM random-connection (graphon) model. 
+ However, those results do not cover the case of
+ general subgraph counting in the Poisson RCM. 
+% considered in this paper. 
+ % In particular, in \cite[Theorem~5.1]{LNS21}, a variance representation for functionals of an edge-marked Poisson process is established.
+ % in terms of some ``subtract-one cost''.
+
+% \medskip 
+ 
+ % A brief comparison between the methods of deriving central limit theorems for functionals of spatial point process\\
+   % To be more specific, recent work \cite{lachiezerey4} shows that the Malliavin-Stein method, combined with stabilization method, yields rates of normal approximation for general stabilizing functionals of an underlying Poisson or binomial point process under the Kolmogorov distance.
+% The rates are presumably optimal.
+   The Malliavin-Stein machinery on Poisson space \cite{lastpeccatipenrose} has been applied to in \cite{LNS21} the numbers of components isomorphic to a given graph in the RCM, using edge marked Poisson processes.
+   In \cite{can2022} a CLT has been derived for subgraph counts in the RCM
+   using edge-marking structure of \cite{LNS21} 
+   under a weak stabilizing condition originating from \cite{penrose01}. 
+   However, as pointed out in Remark~2.5-$(i)$ of \cite{can2022},
+   no convergence rates are derived by this method, as 
+   the strong stabilization condition of \cite{penrose05,lachiezerey4}
+   is not satisfied by general functionals
+   when the connection function $H(x,y)$ is $(0,1)$-valued. 
+ On the other hand, the cumulant method, which uses partition diagrams, enables us to establish qualitative CLT for functionals on RCM. % Find more discussions in Remark~\ref{rem-1}.
+
+% \medskip 
+
+ In this paper, we derive normal approximation rates under a mild condition
+ on the connection function $H(x,y)$ of the random-connection model,
+ by deriving growth rates of cumulants written as sums over
+ connected partitions, see Propositions~\ref{t1} and \ref{th6.4}. 
+ To the best of our knowledge, this is the first time that the normal approximation
+ of subgraph counts with convergence rates is established
+ in the random-connection model.
+ 
+% \medskip 
+
+ In comparison with \cite{khorunzhiy}, which also uses the cumulant method, 
+ we obtain convergence rates in the Kolmogorov distance and our results are 
+ not restricted to line and cycle graphs, as they cover more general subgraphs,
+ see Corollaries~\ref{c01}-\ref{c01-2}. 
+% \textcolor{purple}{See more details in Remark~\ref{rem-1}.}
+ Furthermore, various random graph regimes are discussed.
+ In addition,
+   we show in Section~\ref{rgg} that our approach can be
+   specialized to derive Kolmogorov rates for
+   subgraph counting in the setting of random geometric graphs,
+   see Corollary~\ref{jdkj10}. 
+ 
+% \medskip 
+
+ A number of probabilistic conclusions can be derived
+ from the behavior of cumulants of random variables using the 
+Statulevi\v{c}ius condition, 
+ including convergence rates in the Kolmogorov distance
+ and moderate deviation principles, see
+ \cite{saulis},
+ \cite{doring},
+ \cite{doering}. 
+ In \cite{grotethale18,thale18}, this method has been used to 
+ derive concentration inequalities,
+ normal approximation with error bounds,
+ and moderate deviation principles for random polytopes.
+ 
+% \medskip 
+ 
+Given $\mu$ a % finite
+diffuse Radon measure on $\R^d$,
+ we consider a random-connection model
+ based on an underlying Poisson point process $\Xi$ on $\R^d$
+ with intensity of the form $\lambda\mu(\mathrm{d}x)$, in which 
+ any two vertices $x,y$ in $\Xi$ are connected
+ with the probability $H_\lambda(x,y):= c_\lambda H(x,y) \in [0,1]$,
+ where $H_\lambda$ is the connection function of the model. 
+ Here, we investigate the limiting behavior
+ of the count $N_G$ of a given subgraph $G$
+ as the intensity $\lambda$ of the underlying Poisson point process on $\R^d$
+ tends to infinity. 
+ To this end, we use the combinatorics of the cumulants $\kappa_n(N_G)$ 
+ based on moment expressions obtained in \cite{prkhp} for
+ multiparameter stochastic integrals in the random-connection model.
+% In comparison, our approach uses representations of all moments and cumulants of multiparameter Poisson stochastic integrals, while \cite{LNS21} focuses on variance expressions for general functionals of an edge-marked Poisson process. 
+ 
+% \medskip 
+
+Using partition diagrams and dependency graph arguments,
+we start by showing in Proposition~\ref{mainthm-1}
+that the (virtual) cumulants of a random functional admitting
+a certain connectedness factorization property \eqref{dia-factoriz}  
+can be expressed as sums over connected partition diagrams, 
+ generalizing Lemma~2 in \cite{MalyshevMinlos91}.  
+ A related result has been obtained in \cite{jansen}
+ in the particular case of two-parameter Poisson stochastic
+ integrals, in relation to 
+ cluster expansions for Gibbs point processes in statistical
+ mechanics. 
+ In Proposition~\ref{p01-1}, we apply Proposition~\ref{mainthm-1} 
+ to express the cumulants of multiparameter stochastic integrals,
+ for which this factorization property can be checked from 
+ the moment formulas for 
+ multiparameter stochastic integrals computed in Proposition~\ref{p01-1-0}. 
+ 
+% \medskip 
+ 
+ Such expressions allow us to determine the dominant terms in the growth of
+ cumulants as the intensity $\lambda$ of the underlying point process tends to infinity,
+ by estimating the counts of vertices and edges in connected partition diagrams
+ as in \cite{khorunzhiy}. 
+ We work under a mild condition \eqref{integ-connecting3} 
+ which is satisfied by e.g. any translation-invariant
+ continuous connection function $H : \real^d\times \real^d \to [0,1]$ non vanishing at $0$, such as the {Rayleigh} connection function
+  given by $H(x,y) = e^{ - \beta \Vert x - y\Vert^2}$, $x,y\in \real^d$, for some $\beta > 0$. 
+ 
+% \medskip 
+ 
+ For our analysis of cumulant behavior
+ we identify the leading terms in the sum \eqref{cumulant-diagram1}
+ over connected partition diagrams. 
+ When $G$ is a connected graph with $|V(G)|=r$ vertices,
+ satisfying
+ Assumption~\ref{a61} in the dilute regime \eqref{fjnldsf}
+ where $\lambda^{-1} \ll c_\lambda \leq 1$, 
+ the dominant terms are given by connected partition diagrams with the
+ highest number of blocks, 
+ as found in \cite{privaultkhops}
+ in the case of $k$-hop counting in the one-dimensional random-connection model. 
+ In Proposition~\ref{t1} this yields the cumulant bounds 
+$$
+ (n-1)! c_\lambda^{n |E(G)| } ( K_1 \lambda )^{1+(r-1)n} 
+ \leq 
+  \kappa_n(N_G)
+\leq 
+n!^r c_\lambda^{n |E(G) |} ( K_2 \lambda )^{1+(r-1)n},
+\quad \lambda > 0, 
+$$
+ for some constants $K_1$, $K_2>0$ independent of $\lambda, n\geq 1$. 
+ From the {Statulevi\v{c}ius condition}
+ \eqref{Statuleviciuscond2} below, see \cite{rudzkis,doering},
+ we deduce the Kolmogorov distance bound 
+$$
+\sup_{x\in \real}
+\big| \P \big( \widetilde{N}_G \leq x \big) - \Phi (x) \big| \leq
+\frac{C }{\lambda^{1/(4r - 2)}},
+\qquad \lambda \to \infty, 
+$$ 
+% as $\lambda$ tends to infinity,
+ where $\Phi$ denotes the cumulative distribution function of the standard normal distribution, 
+see Corollary~\ref{c01}, and a moderate deviation principle
+by Theorem~1.1 of \cite{doring}.
+
+% \medskip
+
+ In the sparse regime \eqref{fjnldsf-2} where
+ $ c_\lambda \leq \lambda^{-\alpha}$ for some $\alpha \geq 1$,
+ the maximal rate $\lambda^{
+ \alpha         -(\alpha - 1)r 
+          }$
+ is attained for $G$ a tree-like graph, and
+ in Proposition~\ref{th6.4} we obtain the cumulant bounds % equivalence 
+$$ 
+    \nonumber % \label{cumulant-rhop2}
+            (K_1)^{(r-1)n}
+    \lambda^{
+ \alpha     -(\alpha - 1)r 
+      }
+     \leq 
+% \lambda  \sum_{k=r}^{1+(r-1)n}          (K_1)^k {\cal N}^{(n,r)}_k      \leq 
+  \kappa_n(N_G)
+  %  \leq  \lambda  \sum_{k=r}^{1+(r-1)n} (K_2)^k {\cal N}^{(n,r)}_k
+  \leq
+  n!^r
+  % r!^n
+  (K_2)^{(r-1)n}
+  \lambda^{
+   \alpha -(\alpha - 1)r 
+    } 
+  , \quad \lambda > 0, 
+$$ 
+  if $G$ is a tree, and
+$$ 
+  \nonumber % \label{cumulant-rhop2}
+    (K_1)^r 
+  \lambda^{r-\alpha |E(G)|}
+  \leq 
+  \kappa_n(N_G)
+  \leq
+    n!^r
+  % r!^n
+    (K_2)^{(r-1)n}
+    \lambda^{r-\alpha |E(G)|}, \quad \lambda >0, 
+$$ 
+  if $G$ is a not a tree, such as e.g. a cycle graph.
+  As a consequence of the {Statulevi\v{c}ius condition}
+  \eqref{Statuleviciuscond2}, 
+ when $G$ is a tree
+ we find the Kolmogorov distance bound % Berry-Esseen
+$$  
+\sup_{x\in \real}
+\big| \P \big( \widetilde{N}_G \leq x \big) - \Phi (x) \big| \leq
+ C \lambda^{
+    - (
+\alpha    -(\alpha - 1)r 
+        ) / ( 4r - 2) }
+, \qquad \lambda \to \infty, 
+$$ 
+% as $\lambda$ tends to infinity, 
+ provided that $1 \leq \alpha < r/(r-1)$, 
+ see Corollary~\ref{c01-2}. 
+ 
+% \medskip 
+ 
+ Convergence rates in the Kolmogorov distances may be improved
+ into classical Berry-Esseen rates when 
+ the connection function $H(x,y)$ is $\{0,1\}$-valued, e.g. in disk models
+ as in \cite{privaultkhops}, 
+ by representing subgraph counts as multiple Poisson stochastic integrals
+ and using the fourth moment theorem for $U$-statistics and sums of
+ multiple stochastic integrals Corollary~4.10 in \cite{eichelsbacher}, 
+ see also Theorem~3 in \cite{lachieze-rey} 
+ or Theorem~6.3 in \cite{PS4} for Hoeffding decompositions.
+ On the other hand, the study of stabilizing functionals \cite{penrose05,lachiezerey4} yields normal approximation with rates for random functionals written represented as sums of stabilizing score functions on random geometric graphs. In the general case where $H(x,y)$ is $[0,1]$-valued, both methods no longer apply, which is why we rely on the {Statulevi\v{c}ius condition} which in turn may yield suboptimal convergence rates. 
+ 
+% \medskip
+
+ This paper is organized as follows.
+ Sections~\ref{s2} and \ref{s3} introduce the preliminary
+ framework and notations on connected partition diagrams
+ and combinatorics of virtual cumulants that will be used for 
+ the expression of cumulants of multiparameter stochastic integrals
+ in Section~\ref{s4} and for subgraph counts in Section~\ref{s5}. 
+ Those expressions are applied in Section~\ref{s6}
+ to derive cumulant growth rates in the random-connection model, with application to Kolmogorov rates in subgraph counting via the {Statulevi\v{c}ius condition} in Section~\ref{s6-1}.
+ In Section~\ref{rgg}, normal approximation for subgraph counts on the random geometric graph is discussed under different limiting regimes. 
+
+ \section{Set partitions and diagram connectivity} % , connectivity and virtual cumulants} 
+ \label{s2}
+ \vspace{-0.1cm}
+ \noindent
+ Given $\eta$ a finite set, we denote by $\Pi ( \eta )$ the collection
+ of its set partitions, and we let $|\sigma|$ denote the number of blocks in any partition $\sigma \in \Pi ( \eta )$. 
+ Given $\rho,\sigma$ two set partitions, we say that $\sigma$ is coarser than $\rho$,
+ or that $\rho$ is finer than $\sigma$,
+ and we write $\rho\preceq\sigma$,
+ if every block in $\sigma$ is a combination of blocks in $\rho$. 
+ We also denote by $\rho\vee\sigma$ the finest partition which is coarser than $\rho$ and $\sigma$, and by $\rho\wedge\sigma$ the coarsest partition that is finer than $\rho$ and $\sigma$.
+ We let $\widehat{0}$ be the finest partition, which is made of a single element in each block, and we let $\widehat{1}$ be the coarsest (one-block) partition. 
+ In general, given any graph $G$ we denote by $V(G)$ the set of its vertices, and by
+ $E(G)$ the set of its edges.
+ 
+ % \medskip
+  
+ Our study of cumulants and moments of functionals of random fields
+ relies on partition diagrams, see \cite{MalyshevMinlos91,khorunzhiy,peccatitaqqu}
+ and references therein for additional background. 
+ In what follows we let $[n]:=\{1,2,\dots,n\}$ for $n\geq 1$.
+ 
+ \vspace{-0.2cm}
+ 
+ \begin{definition}
+   Let $n,r\geq 1$. 
+ \begin{enumerate}% [\rm 1.] 
+ \item Given $\eta \subset [n]$ we let
+ $\Pi ( \eta \times [r])$ denote the set of all partitions of the set 
+  $$
+  \eta \times [r] := 
+  \big\{ (k,l) \ : \
+  k\in \eta, \ l = 1,\ldots , r \big\}. 
+ $$
+  % of cardinality $n \times [r]$,
+  % identified to $\{1,\ldots , nr\}$,
+ \item
+   We also let 
+ $\pi_\eta : = (\pi_i)_{i\in \eta} \in \Pi ( \eta \times [r])$ denote the
+  partition made of the $|\eta|$ blocks
+  of size $r$ given by 
+  $$\pi_k := \{ (k,1), \ldots , (k,r) \}, \qquad k\in \eta. 
+ $$
+ \end{enumerate} 
+ \end{definition}
+ 
+ \vspace{-0.4cm}
+ 
+ \noindent
+ Next, we introduce the definition of partition diagrams.
+ 
+ \vspace{-0.2cm}
+ 
+ \begin{definition}
+   Let $n,r \geq 1$.
+   Given $\eta\subset [n]$ and $\rho\in\Pi(\eta\times[r])$
+  a partition of $\eta \times [r]$, we denote by $\Gamma (\rho,\pi_\eta )$
+  the diagram, or graphical representation of the partition $\rho$,
+  constructed by: 
+ \begin{enumerate} % [\rm 1.] 
+ \item arranging the elements of $\eta \times [r]$
+  into an % $|\eta |\times r$
+  array of $|\eta |$ rows and $r$ columns, and
+ \item
+   adding edges connecting neighbors within a same block in $\rho$. 
+ \end{enumerate} 
+ % \medskip
+ In addition, we say that the partition diagram $\Gamma(\rho,\pi )$
+  is connected when $\rho\vee\pi_\eta=\widehat{1}$. 
+ \end{definition}
+ 
+ \vspace{-0.4cm}
+ 
+ \noindent 
+  For example, taking $\eta := \{2,3,5,8,10\}$, given the partitions 
+ \begin{align*}
+   \rho = \big\{
+  & \{(2,1),(3,1),(3,2),(3,3)\}, 
+ \{(2,2),(2,3),(2,4),(3,4)\},
+ \{(5,1)\},
+ \{(5,2),(8,2)\},
+ \\
+ & \{(5,3)\},
+ \{(5,4),(8,3)\},
+ \{(8,1),(10,1)\},
+ \{(8,4)\},
+ \{(10,2),(10,3),(10,4)\}\big\}
+ \end{align*} 
+ and
+ \begin{align*}
+   \sigma = \big\{ & 
+   \{(2,1),(3,1)\},
+   \{(2,2)\},
+   \{(2,3),(3,4)\},
+   \{(2,4)\},
+   \{(3,2),(5,2),(8,2)\},
+   \\
+   &
+   \{(3,3),(5,4),(8,3),(10,2)\},
+   \{(5,1)\},
+   \{(5,3)\},
+   \{(8,1),(10,1)\},
+   \{(8,4)\},
+   \{(10,3)\},
+   \{(10,4)\}
+   \big\}, 
+ \end{align*} 
+ of $\eta \times [4]$,
+ Figure~\ref{fig:diagram0}$-a)$ presents an example of a non-connected partition diagram  
+ $\Gamma ( \rho , \pi)$,
+ and Figure~\ref{fig:diagram0}$-b)$ presents an example of a connected partition diagram $\Gamma ( \sigma , \pi)$. 
+ 
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+ \scalebox{0.75}{
+   \subcaptionbox{Non-connected partition diagram $\Gamma(\rho,\pi)$.}[.5\textwidth]{%
+     \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {2};
+ \node[anchor=east,font=\small] at (0.8,4) {3};
+ \node[anchor=east,font=\small] at (0.8,3) {5};
+ \node[anchor=east,font=\small] at (0.8,2) {8};
+ \node[anchor=east,font=\small] at (0.8,1) {10};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4) -- (2,4) -- (3,4);
+ \draw[very thick] (2,5) -- (3,5) -- (4,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,3) -- (2,2);
+ \draw[very thick] (2,1) -- (3,1) -- (4,1);
+ \draw[very thick] (3,2) -- (4,3);
+ 
+ \end{tikzpicture}}%
+ }
+   \scalebox{0.75}{
+ \subcaptionbox{Connected partition diagram $\Gamma(\sigma,\pi)$.}[.5\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {2};
+ \node[anchor=east,font=\small] at (0.8,4) {3};
+ \node[anchor=east,font=\small] at (0.8,3) {5};
+ \node[anchor=east,font=\small] at (0.8,2) {8};
+ \node[anchor=east,font=\small] at (0.8,1) {10};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4); 
+ \draw[very thick] (3,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,2) -- (2,4);
+ \draw[very thick] (2,1) -- (3,2) -- (4,3) -- (3,4);
+ 
+ \end{tikzpicture}}%
+ }
+ \caption{Two examples of partition diagrams with $\eta = \{2,3,5,8,10\}$, $n=10$, $r=4$.}
+ \label{fig:diagram0}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ \noindent 
+ Note that the above notion of connected partition diagram is distinct from
+ that of irreducible partition, see, e.g., \cite{eabender}.
+ 
+ \vspace{-0.2cm}
+ 
+ \begin{definition}
+   Let $n\geq 1$,
+   $G$ a connected graph with $|V(G)| = r$ vertices, $r \geq 1$,  
+   and consider $G_1,\ldots , G_n$ copies of $G$ respectively built on
+   $\pi_1,\ldots , \pi_n$.
+   Let also $\rho \in\Pi(\eta\times[r])$
+   be a partition of $\eta\times[r]$. 
+ \begin{enumerate} % [\rm 1.]
+ \item
+   We let $\widetilde{\rho}_G$ be the multigraph constructed
+   on the blocks of $\rho$ 
+   by adding an edge between two blocks $\rho_1,\rho_2$ of the
+   partition $\rho$ whenever there exist $(k,l_1)\in \rho_1$
+   and $(k,l_2)\in \rho_2$ such that $(l_1,l_2)$ is an edge in $G_k$.
+   % , where $G_k$ denotes the $k$-th replica of graph $G$;
+ \item 
+   We let $\rho_G$ be the graph constructed
+   on the blocks of $\rho$
+   by removing redundant edges
+   in $\widetilde{\rho}_G$,
+   so that at most one edge remains between any two blocks $\rho_1,\rho_2\in\rho$. 
+ \end{enumerate}
+ \end{definition}
+ 
+ \vspace{-0.4cm}
+ 
+ \noindent
+ Figure~\ref{fig:diagram1}-b) presents an illustration of the
+ multigraph $\widetilde{\rho}_G$ and graph $\rho_G$ on the blocks of $\rho$ when
+ $G$ is the line graph
+ $\{(1,2),(2,4),(3,4)\}$ on $\{1,2,3,4\}$. % with vertices $(1,2)$, $(2,4)$, $(3,4)$.  
+ % \medskip
+ 
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ and multigraph $\widetilde{\rho}_G$ in blue.}[.5\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4) -- (2,4) -- (3,4);
+ \draw[very thick] (2,5) -- (3,5) -- (4,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,3) -- (2,2);
+ \draw[very thick] (2,1) -- (3,1) -- (4,1);
+ \draw[very thick] (3,2) -- (4,3);
+ 
+ \draw[thick,dash dot,blue] (1,5) .. controls (1.5,5+.5) .. (2,5);
+ 
+ \draw[thick,dash dot,blue] (3,4) .. controls (3.5,4+.5) .. (4,4);
+ \draw[thick,dash dot,blue] (2,4) .. controls (3,4-.5) .. (4,4);
+ \foreach \i in {2,...,3}
+          {
+ \draw[thick,dash dot,blue] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+ \draw[thick,dash dot,blue] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+ \draw[thick,dash dot,blue] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+ } 
+ 
+ \draw[thick,dash dot,blue] (1,1) .. controls (1.5,1+.5) .. (2,1);
+ 
+ \end{tikzpicture}}%
+   }
+     \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho ,\pi)$ and graph $\rho_G$ in red.}[.5\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4) -- (2,4) -- (3,4);
+ \draw[very thick] (2,5) -- (3,5) -- (4,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,3) -- (2,2);
+ \draw[very thick] (2,1) -- (3,1) -- (4,1);
+ \draw[very thick] (3,2) -- (4,3);
+ 
+ \draw[thick,dash dot,purple] (1,5) .. controls (1.5,5.5) .. (2,5);
+ %\draw[thick,dash dot,blue] (2,4) .. controls (3,3.5) .. (4,4);
+ %\draw[thick,dash dot,blue] (3,4) .. controls (3.5,4.5) .. (4,4);
+ 
+ \draw[thick,dash dot,purple] (1,3) .. controls (1.5,3.5) .. (2,3);
+ \draw[thick,dash dot,purple] (2,3) .. controls (3,2.5) .. (4,3);
+ \draw[thick,dash dot,purple] (3,3) .. controls (3.5,3.5) .. (4,3);
+ 
+ \draw[thick,dash dot,purple] (1,2) .. controls (1.5,2.5) .. (2,2);
+ \draw[thick,dash dot,purple] (2,2) .. controls (3,1.5) .. (4,2);
+ \draw[thick,dash dot,purple] (3,2) .. controls (3.5,2.5) .. (4,2);
+ 
+ \draw[thick,dash dot,purple] (1,1) .. controls (1.5,1.5) .. (2,1);
+ 
+ \end{tikzpicture}}%
+     }
+     \caption{Diagram and graphs $G$, $\rho_G$, $\widetilde{\rho}_G$ with $n=5$, $r=4$.}
+ \label{fig:diagram1}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ % We can identify $\rho$ as the vertices set of $\rho_G$, i.e. $V(\rho_G)=\rho$, and denote by $E(\rho_G)$ the set of edges between blocks of $\rho$ on the digram $\rho_G$.
+ % More intuitively, $\rho_G$ represents a graph consist of $n$ replicas of graph $G$ which are glued together via merging vertices according to $\rho\in\Pi([n]\times[r])$.
+ % When the graph $G$ is connected, if $\rho$ is connected in the sense of $\rho\vee\pi=\widehat{1}$, then the graph $\rho_G$ is connected as well.
+ % For any partition $\rho \in \Pi ([n]\times [r])$, we let
+ %$$
+ %\rho_b := \{ c \in \rho \ : \ c \subset b\times[r] \},
+ %\qquad b \subset [n]. 
+ %$$
+ %For example, when $b = \{1,2\}$, in Figure~\ref{fig:diagram1} we have
+ %$$
+ %\rho_{\{1,2\}} = \big\{\{(1,1),(2,1),(2,2),(2,3)\},
+ %\{(1,2),(1,3),(1,4),(2,4)\}\big\}.
+ %$$
+ 
+ \vspace{-0.2cm}
+ 
+ \begin{definition}
+   Let $n , r \geq 1$,
+   and let $\rho \in \Pi ([n]\times [r])$ be a partition of $[n]\times [r]$.
+   \begin{enumerate} % [\rm 1.] 
+   \item
+     For $b \subset [n]$, we let $\rho_b \subset \rho$ be defined as 
+ $$
+ \rho_b := \{ c \in \rho \ : \ c \subset b\times[r] \}. 
+ $$
+ \item Given $\eta \subset [n]$ 
+  we split any partition $\rho$ of $\eta\times[r]$ into the equivalence classes
+  deduced from the
+  connected components of the diagram $\rho_G$, as 
+ % Since the graph $G$ is connected, we have 
+ \begin{equation}
+ \label{fjklds1} 
+ \rho = \bigcup_{\substack{b\subset\eta\\b\times [r] \in \rho \vee \pi_\eta}} \rho_b, 
+ \end{equation} 
+ \end{enumerate}
+ \end{definition} 
+ 
+ \vspace{-0.4cm}
+ 
+ \noindent
+  As an example, in Figure~\ref{fig:diagram1-3}-$a)$, when $b = \{1,2\}$ we have
+ $$
+ \rho_{\{1,2\}} = \big\{\{(1,1),(2,1),(2,2),(2,3)\},
+ \{(1,2),(1,3),(1,4),(2,4)\}\big\}, 
+ $$
+ % \medskip
+ and the partition \eqref{fjklds1} is
+ illustrated in Figure~\ref{fig:diagram1-3}-$b)$ with
+  $b_1 = \{ 1,2\}$ and $b_2 = \{3,4,5\}$. 
+ % such that $b\times [r] \in \rho \vee \pi$. 
+ 
+ % \medskip
+ 
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ and block $\rho_{\{1,2\}}$.}[.5\textwidth]{%
+ \begin{tikzpicture}[hide labels]
+ \tikzstyle{VertexStyle}=[shape = circle, fill = blue!20, minimum size = 0pt, scale=0., text = white, hide labels]
+ 
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4) -- (2,4) -- (3,4);
+ \draw[very thick] (2,5) -- (3,5) -- (4,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,3) -- (2,2);
+ \draw[very thick] (2,1) -- (3,1) -- (4,1);
+ \draw[very thick] (3,2) -- (4,3);
+ 
+ \node (1) [label=above:{}] at (1,5) {};
+ \node (2) [label=above:{}] at (2,5) {};
+ \node (3) [label=above:{}] at (3,5) {};
+ \node (4) [label=above:{}] at (4,5) {};
+ 
+ \node (5) [label=above:{}] at (1,4) {};
+ \node (6) [label=above:{}] at (2,4) {};
+ \node (7) [label=above:{}] at (3,4) {};
+ \node (8) [label=above:{}] at (4,4) {};
+ 
+ % \Vertex[x=1, y=5]{1}
+ % \Vertex[x=2, y=5]{2}
+ % \Vertex[x=3, y=5]{3}
+ % \Vertex[x=4, y=5]{4}
+ 
+ % \Vertex[x=1, y=4]{5}
+ % \Vertex[x=2, y=4]{6}
+ % \Vertex[x=3, y=4]{7}
+ % \Vertex[x=4, y=4]{8}
+ 
+ \draw[very thick,blue] \convexpath{1,4,8,5}{.2cm};
+ 
+ \draw[blue,line width=1mm, ->] node[font=\fontsize{12}{0}\selectfont, right=of 2, right=0.5cm, below=-0.9cm] {$~~~~~~\rho_{\{1,2\}}$};
+ 
+ % \foreach \i in {1,...,5}
+ %          {
+ % \draw[thick,dash dot,blue] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+ % \draw[thick,dash dot,blue] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+ % \draw[thick,dash dot,blue] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+ % } 
+ \end{tikzpicture}}%
+   }
+   \scalebox{0.75}{
+   \subcaptionbox{Splitting $\{\rho_{b_1},\rho_{b_2}\}$
+   of $\rho$ according to $\rho_G$.}[.5\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4) -- (2,4) -- (3,4);
+ \draw[very thick] (2,5) -- (3,5) -- (4,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,3) -- (2,2);
+ \draw[very thick] (2,1) -- (3,1) -- (4,1);
+ \draw[very thick] (3,2) -- (4,3);
+ 
+ \draw[thick,dash dot,purple] (1,5) .. controls (1.5,4.5) .. (2,5);
+ %\draw[thick,dash dot,blue] (2,4) .. controls (3,3.5) .. (4,4);
+ %\draw[thick,dash dot,blue] (3,4) .. controls (3.5,4.5) .. (4,4);
+ 
+ \draw[thick,dash dot,purple] (1,3) .. controls (1.5,2.5) .. (2,3);
+ \draw[thick,dash dot,purple] (2,3) .. controls (3,2.5) .. (4,3);
+ \draw[thick,dash dot,purple] (3,3) .. controls (3.5,3.1) .. (4,3);
+ 
+ \draw[thick,dash dot,purple] (1,2) .. controls (1.5,2.5) .. (2,2);
+ \draw[thick,dash dot,purple] (2,2) .. controls (3,1.5) .. (4,2);
+ \draw[thick,dash dot,purple] (3,2) .. controls (3.5,2.5) .. (4,2);
+ 
+ \draw[thick,dash dot,purple] (1,1) .. controls (1.5,1.5) .. (2,1);
+ 
+ \node (1) [label=above:{}] at (1,5) {};
+ \node (2) [label=above:{}] at (2,5) {};
+ \node (3) [label=above:{}] at (3,5) {};
+ \node (4) [label=above:{}] at (4,5) {};
+ 
+ \node (5) [label=above:{}] at (1,4) {};
+ \node (6) [label=above:{}] at (2,4) {};
+ \node (7) [label=above:{}] at (3,4) {};
+ \node (8) [label=above:{}] at (4,4) {};
+ 
+ \draw[very thick,blue] \convexpath{1,4,8,5}{.2cm};
+ 
+ \draw[blue,line width=1mm, ->] node[font=\fontsize{12}{0}\selectfont, right=of 4, left=-.5cm, below=0.2cm] {$~~~~~~~\rho_{b_1}$};
+ 
+ \node (9) [label=above:{}] at (1,3) {};
+ \node (10) [label=above:{}] at (2,3) {};
+ \node (11) [label=above:{}] at (3,3) {};
+ \node (12) [label=above:{}] at (4,3) {};
+ 
+ \node (13) [label=above:{}] at (1,2) {};
+ \node (14) [label=above:{}] at (2,2) {};
+ \node (15) [label=above:{}] at (3,2) {};
+ \node (16) [label=above:{}] at (4,2) {};
+ 
+ \node (17) [label=above:{}] at (1,1) {};
+ \node (18) [label=above:{}] at (2,1) {};
+ \node (19) [label=above:{}] at (3,1) {};
+ \node (20) [label=above:{}] at (4,1) {};
+ 
+ \draw[very thick,blue] \convexpath{9,12,20,17}{.2cm};
+ 
+ \draw[blue,line width=1mm, ->] node[font=\fontsize{12}{0}\selectfont, right=of 12, left=-.5cm, below=0.7cm] {$~~~~~~~\rho_{b_2}$};
+ 
+ \end{tikzpicture}}%
+   }
+   \caption{Splitting of the partition $\rho$ with $\rho \vee \pi = \{\pi_1\cup\pi_2, \pi_3\cup\pi_4\cup\pi_5\}$ and $n=5$, $r=4$.}
+ \label{fig:diagram1-3}
+ \end{figure}
+ 
+ \vspace{-1cm}
+   
+ % and 
+ % $\rho_b := \{ c\in \rho \ : \ c \subset b\times[r] \}$ % ( b \times [r] )$
+ % is connected in the diagram $\rho_G$. 
+ \begin{definition}
+  Let $n , r \geq 1$. 
+  Given $\sigma \in \Pi ([n] )$ a partition of $[n]$, 
+  we let $\Pi_\sigma ( [n] \times [r])$ denote the set of
+  partitions $\rho$ of $[n] \times [r]$ such that
+  $$
+  \rho\vee\pi= \{ b \times [r] \ : \ b \in \sigma \}, 
+  $$
+  and % for any $\eta \subset [n]$
+  we partition $\Pi ([n] \times [r])$ as
+ \begin{equation}
+ \label{partition} 
+  \Pi ([n] \times [r])
+  = \bigcup_{\sigma \in \Pi ([n] )} \Pi_\sigma ([n] \times [r]). 
+ \end{equation} 
+ \end{definition}
+ 
+ \vspace{-0.4cm}
+ 
+ \noindent
+  We note that given $\eta \subset [n]$,
+ the set $\Pi_{\widehat{1}} ( \eta \times [r])$ consists of the partitions
+ $\rho$ of $\eta \times [r]$ for which the diagram $\rho_G$
+ is connected, as in Figure~\ref{fig:diagram2}. 
+  In what follows, we will also use {\em non-flat} partition diagrams
+  $\Gamma(\rho,\pi )$ such that $\rho \wedge \pi = \widehat{0}$,
+  see Chapter~4 of \cite{peccatitaqqu} and Figure~\ref{fig:diagram2}. 
+ 
+ \vspace{-0.2cm}
+ 
+ \begin{definition} 
+   \noindent
+  Given $n,r\geq 1$, we denote by 
+  $$
+  \mathcal{C} (n,r) :=\{\rho\in\Pi_{\widehat{1}} ([n]\times[r]) \ : \ \rho\wedge \pi=\widehat{0} \}
+   $$
+  the set of connected non-flat partition diagrams on $[n]\times[r]$. 
+ \end{definition}
+ 
+ % \medskip
+ 
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ and multigraph $\widetilde{\rho}_G$ in blue.}[.5\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4); 
+ \draw[very thick] (3,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,2) -- (2,4);
+ \draw[very thick] (2,1) -- (3,2) -- (4,3) -- (3,4);
+ 
+ \foreach \i in {1,...,5}
+          {
+            \draw[thick,dash dot,blue] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,blue] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,blue] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,blue] (4,\i) .. controls (2.5,\i-.5) .. (1,\i);
+          }
+ \end{tikzpicture}}%
+   }
+     \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho ,\pi)$ and graph $\rho_G$ in red.}[.5\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4); 
+ \draw[very thick] (3,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,2) -- (2,4);
+ \draw[very thick] (2,1) -- (3,2) -- (4,3) -- (3,4);
+ 
+ \foreach \i in {1,...,3}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (4,\i) .. controls (2.5,\i-.5) .. (1,\i);
+          }
+ 
+            \draw[thick,dash dot,purple] (1,4) .. controls (1.5,4+.5) .. (2,4);
+ %           \draw[thick,dash dot,blue] (2,2) .. controls (2.5,2+.5) .. (3,2);
+            \draw[thick,dash dot,purple] (3,4) .. controls (3.5,4+.5) .. (4,4);
+            \draw[thick,dash dot,purple] (4,4) .. controls (2.5,4-.5) .. (1,4);
+ 
+ \foreach \i in {5,...,5}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (4,\i) .. controls (2.5,\i-.5) .. (1,\i);
+          }
+ \end{tikzpicture}}%
+     }
+     \caption{Connected non-flat partition diagram with $G$ a cycle graph and $n=5$, $r=4$.}
+ \label{fig:diagram2}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ \noindent
+  We will also consider the following set of 
+  connected non-flat partition diagrams which have maximal
+  number of blocks. 
+ 
+ \vspace{-0.2cm}
+ 
+  \begin{definition} 
+   \noindent
+  Given $n\geq 1$ and $r\geq 2$,
+ we denote by
+ $$
+  \mathcal{M}(n,r):=\{\rho\in \mathcal{C} (n,r)  \ : \ |\rho|= 1 + (r-1)n \}
+   $$
+  the set of maximal connected non-flat partition diagrams on $[n]\times[r]$.
+ \end{definition}
+ 
+ \vspace{-0.4cm}
+ 
+ \noindent
+  The bound in part $(a)$ of the next lemma is consistent with
+  (6.2) in Proposition~6.1 of \cite{schulte-thaele},
+  which shows that the power $r$ of $n!$ cannot be improved in \eqref{coeff-0}. 
+ \begin{lemma}
+   \label{fjkldsf-l}
+   \noindent
+   $a)$ The cardinality of the set \ $\mathcal{C} (n,r)$
+  of connected non-flat partition diagrams on $[n]\times[r]$ satisfies 
+  \begin{equation}
+    \label{coeff-0}
+   |\mathcal{C} (n,r) | \leq n!^r r!^{n-1}, 
+   \qquad n,r \geq 1. 
+ \end{equation}
+ \noindent
+ $b)$ 
+  The cardinality of the set 
+ $ \mathcal{M}(n,r)$
+  of maximal connected non-flat partition diagrams on $[n]\times[r]$ satisfies 
+ \begin{equation}\label{coeff-10}
+   |\mathcal{M}(n,r)|=r^{n-1}\prod_{i=1}^{n-1}(1+(r-1)i),
+   \qquad n,r\geq 1, 
+ \end{equation}
+  with the bounds 
+ \begin{equation}\label{coeff-1}
+     ( (r-1)r )^{n-1}(n-1)!\le
+     |\mathcal{M}(n,r)|
+      \leq ( (r-1)r )^{n-1}n!, \quad n\geq 1, \ r\geq 2. 
+ \end{equation}
+ \end{lemma}
+ \begin{proof}
+  \noindent
+  $a)$ We clearly have $|\mathcal{C} (1,r) | =1$ for all $r\geq 1$. 
+  Given $\rho \in \mathcal{C} (n+1,r)$ a non-flat partition 
+  such that the diagram $\Gamma(\rho,\pi )$ is connected,
+  we construct a connected undirected graph
+  $\widehat{\rho}$ on $[n+1]$ 
+  in which two vertices $i,j\in [n+1]$
+  of $\widehat{\rho}$ are connected if and only
+  if there exists a block $b\in \rho$ such that $\pi_i \cap b \not= \emptyset$
+  and $\pi_j \cap b \not= \emptyset$,
+  see Figure~\ref{fig:diagram0-11}-$a)$.  
+ 
+ \vspace{-0.4cm}
+ 
+   \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ and graph $\widehat{\rho}$.}[.48\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,draw, circle, inner sep=0pt, minimum size=11pt,font=\small] at (0.7,5) {1};
+ \node[anchor=east,draw, circle, inner sep=0pt, minimum size=11pt,font=\small] at (0.7,4) {2};
+ \node[anchor=east,draw, circle, inner sep=0pt, minimum size=11pt,font=\small] at (0.7,3) {3};
+ \node[anchor=east,draw, circle, inner sep=0pt, minimum size=11pt,font=\small] at (0.7,2) {4};
+ \node[anchor=east,draw, circle, inner sep=0pt, minimum size=11pt,font=\small] at (0.7,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4); 
+ \draw[very thick] (3,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,2) -- (2,4);
+ \draw[very thick] (2,1) -- (3,2) -- (4,3) -- (3,4);
+ 
+ \draw[very thick,purple] (0.3,5) .. controls (0.2,4.5) .. (0.3,4);
+ \draw[very thick,purple] (0.3,4) .. controls (0.2,3.5) .. (0.3,3);
+ \draw[very thick,purple] (0.3,3) .. controls (0.2,2.5) .. (0.3,2);
+ \draw[very thick,purple] (0.3,2) .. controls (0.2,1.5) .. (0.3,1);
+ \draw[very thick,purple] (0.7,4) .. controls (0.85,3) .. (0.7,2);
+ \draw[very thick,purple] (0.7,4) .. controls (0.95,3) .. (0.7,1);
+ 
+ \end{tikzpicture}%
+ }
+   }
+     \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ and spanning tree $\widebar{\rho}$.}[.5\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,draw, circle, inner sep=0pt, minimum size=11pt, font=\small] at (0.7,5) {1};
+ \node[anchor=east,draw, circle, inner sep=0pt, minimum size=11pt,font=\small] at (0.7,4) {2};
+ \node[anchor=east,draw, circle, inner sep=0pt, minimum size=11pt,font=\small] at (0.7,3) {3};
+ \node[anchor=east,draw, circle, inner sep=0pt, minimum size=11pt,font=\small] at (0.7,2) {4};
+ \node[anchor=east,draw, circle, inner sep=0pt, minimum size=11pt,font=\small] at (0.7,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ % \draw [very thick] (3,1) circle (4.5pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ % \draw [very thick] (4,1) circle (4.5pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ % \draw [very thick] (4,2) circle (4.5pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ % \draw [very thick] (1,3) circle (4.5pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ % \draw [very thick] (3,3) circle (4.5pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ % \draw [very thick] (2,5) circle (4.5pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ % \draw [very thick] (4,5) circle (4.5pt);
+ 
+ \draw[very thick] (1,5) -- (1,4); 
+ \draw[very thick] (3,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,2) -- (2,4);
+ \draw[very thick] (2,1) -- (3,2) -- (4,3) -- (3,4);
+ 
+ \draw[very thick,blue] (0.3,5) .. controls (0.2,4.5) .. (0.3,4);
+ % \draw[thick,purple] (0.3,4) .. controls (0.2,3.5) .. (0.3,3);
+ \draw[very thick,blue] (0.3,3) .. controls (0.2,2.5) .. (0.3,2);
+ \draw[very thick,blue] (0.3,2) .. controls (0.2,1.5) .. (0.3,1);
+ \draw[very thick,blue] (0.7,4) .. controls (0.85,3) .. (0.7,2);
+ % \draw[thick,purple] (0.7,4) .. controls (0.95,3) .. (0.7,1);
+ 
+ \end{tikzpicture}%
+ }
+     }
+     \caption{Example of graph $\widehat{\rho}$ and its spanning tree subgraph.}
+ \label{fig:diagram0-11}
+ \end{figure}
+ 
+ \vspace{-0.8cm}
+   
+ \noindent
+  Next, we claim that
+  there exists $i\in [n+1]$ such that the partition ${\rho}^{(i)}$
+  of $([n+1] \setminus \{i\} ) \times [r]$ 
+  defined as 
+  $$
+  {\rho}^{(i)} : = \{ b \setminus \pi_i \ : \ b\in \rho \}
+  $$
+  is connected non-flat, i.e. belongs to $C(n,r)$.
+  For this, we note that $\widehat{\rho}$ contains a spanning
+  tree $\widebar{\rho}$, see e.g. Theorem~4.2.3 in \cite{balakrishnan},
+  as shown in Figure~\ref{fig:diagram0-11}-$b)$. 
+ % In addition, the tree $\widebar{\rho}$ has at most $r$ leaves, because after removing any of root of $\widebar{\rho}$, the remaining partition can be reconnected using no more than $r$ vertices from the root.
+  In this case, choosing $i\in [n+1]$ to be a given leaf
+  (e.g. the leaf with lowest or highest index)
+  in the tree $\widebar{\rho}$
+  results into ${\rho}^{(i)}$ remaining non-flat and connected,
+  because $i$ is connected to a single vertex in $\widebar{\rho}$.
+  As a consequence, any connected non-flat partition
+  $\rho \in \mathcal{C}(n+1,r)$ can be
+  obtained from a connected non-flat partition in $\mathcal{C}(n,r)$ in at most
+  $(n+1)^r r!$ ways, by connecting each of the $r$ new points
+  in at most $n+1$ possible ways (including non-connection),
+  and multiplying by the number $r!$ of possible permutations of $\pi_i$. 
+  This yields the induction inequality 
+  $$
+  |\mathcal{C} (n+1,r) | \leq (n+1)^r r! |\mathcal{C} (n,r) |,
+  $$
+  from which we conclude that \eqref{coeff-0} holds. 
+  
+ % \medskip 
+ 
+  \noindent
+  $b)$ 
+  We clearly have $|\mathcal{M}(1,r)|=1$ for all $r\geq 1$. 
+  Next, each maximal connected non-flat partition diagram
+  $\rho\in\mathcal{M}(n+1,r)$ can be
+    obtained by choosing 
+    one of $r$ elements of $\{(n+1,1),\dots,(n+1,r)\}$, 
+    and connecting them in $1+(r-1)n$ ways 
+    to any partition in $\mathcal{M}(n,r)$, $n\geq 1$.
+    This implies the recursion formula 
+    $$|\mathcal{M}(n+1,r)|=r\times (1+(r-1)n)|\mathcal{M}(n,r)|,
+    $$
+  which yields \eqref{coeff-10}.
+ \end{proof} 
+ 
+ \vspace{-0.4cm}
+ \section{Virtual cumulants} 
+ \label{s3}
+ \vspace{-0.1cm}
+ \noindent
+ %\begin{definition}Let $r\ge1$ be fixed. A functional $F:\cup_{n\ge1}P(\Delta_{n,r})\to\R$ is said to own the {\it splitting property} if for every $n\ge1$, $\forall~\rho\in P(\Delta_{n,r})$, there exists a group of partitions (not necessarily unique)
+ %$$\eta^i\in P(\Delta_{n_i,r}),~~~~i=1,\dots,\ell,$$with $n_1+\dots+n_{\ell}=n$, such that%\begin{equation}\label{splitting1}
+ %F(\rho)=\prod_{i=1}^\ell F(\eta^i).
+ %\end{equation}
+ %And we say that $F$ allows the connectedness factorisation if (\Ref{splitting1}) holds for $\rho^i,~i=1,\dots,\ell$ where $\Gamma(\rho^1,\pi^1),\dots,\Gamma(\rho^\ell,\pi^\ell)$ are all connected sub-diagrams in $\Gamma(\rho,\pi)$. 
+ %\end{definition}
+ The following definition
+ uses the concept of independence of a virtual field
+ with respect to graph connectedness,
+ see Relation~(17) in \cite[p.~34]{MalyshevMinlos91}. 
+ 
+ \vspace{-0.2cm}
+ 
+ \begin{definition}
+   Let $n,r\geq 1$.
+   We say that a mapping $F$ defined on partitions of
+   $[n]\times [r]$
+   % $\rho \in \bigcup_{\eta \subset [n]} \Pi ( \eta \times [r])$ 
+   admits the {\it connectedness factorization} property
+   if it decomposes according to the partition \eqref{fjklds1} as 
+   \begin{equation}
+     \label{dia-factoriz}
+   F ( \rho ) = \prod_{b \times [r] \in \rho \vee \pi } F ( \rho_b ),  
+   \qquad
+    \rho \in \Pi ([n]\times [r]). 
+ \end{equation}
+ % for every partition $\rho$ of $[n]\times [r]$. 
+ % where $g_i=\Gamma(\pi^i,\rho^i)$ is given by (\Ref{dimreduce}), (\Ref{decom2}) and (\Ref{decom3}).
+ \end{definition} 
+ 
+ \vspace{-0.4cm}
+ 
+ \noindent
+ In what follows,
+ given $F$ a mapping defined on the partitions of
+   $[n]\times [r]$, 
+ % $\bigcup_{\eta \subset [n]} \Pi ( \eta \times [r])$, 
+   we will use the M\"obius transform
+   $\widehat{F}$ of $F$, 
+   defined as
+   % $f:2^{[n]}\to \R$ be a set function, given by
+ \begin{equation}
+ \nonumber % \label{genfun-1}
+   \widehat{F}( \eta ):=\sum_{\rho \in \Pi ( \eta \times [r])} F(\rho ),
+   \qquad
+   \eta \subset [n],
+ \end{equation}
+ with $\widehat{F}(\emptyset):=0$,
+ see \cite{rota1964} % Proposition~2 of \cite{rota1964} and 
+ % Chapter~5 of \cite{rotabk},
+  and \S~2.5 of \cite{peccatitaqqu}. 
+  % , where $2^{[n]}$ stands for the power set of $[n]$.
+  We refer to \cite[p.~33]{MalyshevMinlos91} for the following definition.
+ 
+ \vspace{-0.2cm}
+ 
+ \begin{definition}
+   Let $n,r\geq 1$.
+   The virtual cumulant $G$ of 
+  a mapping $F$ on $\bigcup_{\eta \subset [n]} \Pi ( \eta \times [r])$ 
+  is defined by letting  
+  $C_F ( \eta ):=\widehat{F}( \eta )$ when $| \eta |=1$, and
+  then recursively by 
+ \begin{equation}
+   \label{fjkldsf}
+   C_F ( \eta ):=\widehat{F}( \eta )-\sum_{
+     { \sigma \in \Pi (\eta )
+     \atop 
+     |\sigma|\geq 2
+     }
+   }
+   \prod_{b \in \sigma } C_F ( b ), \qquad
+   \eta \subset [n], \quad |\eta |\geq 2. 
+ \end{equation}
+ \end{definition} 
+ 
+ \vspace{-0.4cm}
+ 
+ \noindent
+  In the particular case $r=1$, we note that when
+  $(X_1,\ldots , X_n)$ is a sequence of random variables, letting 
+ $$
+  F(\rho) := \E\left[ \prod_{b \in \rho} \prod_{i \in b} X_i \right]
+  = \E\left[ \prod_{i=1}^n X_i \right], 
+ $$ 
+  Relation~\eqref{fjkldsf} shows that 
+ $$ 
+  C_F ( \eta )=
+  \sum_{
+    \sigma \in \Pi [ \eta ]
+  }
+  (-1)^{|\sigma |-1} (|\sigma |-1)! \prod_{b\in \sigma} F ( \{ b \} )
+  =
+  \sum_{
+    \sigma \in \Pi [ \eta ]
+  }
+  (-1)^{|\sigma |-1} (|\sigma |-1)! 
+  \prod_{b \in \rho} \E\left[ \prod_{i \in b} X_i \right],
+ $$
+  coincides with the actual joint cumulant of
+  $(X_i)_{i\in \eta}$, $\eta \subset [n]$.
+ 
+ % \medskip
+  
+ The following proposition is an extension of
+ the classical Lemma~2 in \cite[p.~34]{MalyshevMinlos91},
+ see also Lemma~3.1 in \cite{khorunzhiy}.
+ % Recall that given $\eta \subset [n]$, $\Pi_{\widehat{1}} ( \eta \times [r])$ consists of the partitions $\rho$ of $\eta \times [r]$ for which the diagram $\rho_G$ is connected. 
+ 
+  \vspace{-0.2cm}
+ 
+ \begin{prop}
+ \label{mainthm-1}
+ Let $n,r\geq 1$. 
+ Let $F$ be a mapping defined on $\bigcup_{\eta \subset [n]}
+  \Pi ( \eta \times [r])$ and admitting the {connectedness factorization} property
+  \eqref{dia-factoriz}.
+  Then, for $\eta \subset [n]$ with $\eta \ne\emptyset$, 
+  the virtual cumulant of $F$ is given by the sum 
+ \begin{equation}
+ \label{keylma-2}
+ C_F (\eta ) = \sum_{\sigma \in \Pi_{\widehat{1}} ( \eta \times [r] )
+   \atop {\rm (connected)}}
+ F(\sigma )
+ \end{equation}
+ over connected partition diagrams on $\eta \times [r]$. 
+ \end{prop} 
+ \begin{proof}
+ The claim is true when $|\eta |=1$. %Let $[n]$ be the set of vertices of some graph $G$. 
+ Assume that it is true for all $\eta \subset [n]$ for some $n \geq 1$, and 
+ % , by induction principle, it remains to show that the claim keeps true for any $A$ with $|A|=m+1$.
+  let $\eta$ be such that $|\eta |=n+1$.
+  By \eqref{partition} and \eqref{dia-factoriz}, we have 
+ \begin{eqnarray*}
+   \widehat{F}(\eta )
+   &=&
+   \sum_{\rho \in \Pi (\eta \times [r])} F(\rho )
+ % \qquad \qquad \mathrm{(by~~(\Ref{genfun-1}))}
+   \\
+   &=&
+   \sum_{\sigma \in \Pi (\eta )}
+   \sum_{\rho \in \Pi_\sigma (\eta \times [r])} F(\rho )
+ % \qquad \qquad \mathrm{(by~~(\Ref{genfun-1}))}
+   \\
+   &=&
+   \sum_{\sigma \in \Pi (\eta )}
+   \sum_{\rho \in \Pi_\sigma (\eta \times [r])}
+   \prod_{b \in \sigma} 
+   F(\rho_b ) 
+ % \qquad \qquad \mathrm{(by~~(\Ref{genfun-1}))}
+  \\
+   &=&
+   \sum_{\sigma \in \Pi (\eta )}
+   \prod_{b \in \sigma } 
+   \sum_{\rho \in \Pi_{\widehat{1}} (b \times [r])
+     \atop {\rm (connected)}
+   } 
+   F(\rho )
+ % \qquad \qquad \mathrm{(by~~(\Ref{genfun-1}))}
+ % \\ &=& \sum_{\rho \in \Pi_{\widehat{1}} ( \eta \times [r]) } F(\rho ) + \sum_{\sigma \in \Pi (\eta ) \atop |\sigma |\geq 2} \prod_{\mu \in \sigma } \sum_{\rho \in \Pi_{\widehat{1}} ( \mu \times [r] ) } F(\rho )
+ % \qquad \qquad \mathrm{(by~~(\Ref{genfun-1}))}
+  \\
+   &=&
+  \sum_{\rho \in \Pi_{\widehat{1}} ( \eta \times [r] )
+    \atop {\rm (connected)}
+  }
+   F(\rho )
+   +
+   \sum_{\sigma \in \Pi (\eta ) \atop |\sigma |\geq 2}
+   \prod_{b \in \sigma } 
+   C_F (b ), 
+ % \qquad \qquad \mathrm{(by~~(\Ref{genfun-1}))}, 
+ \end{eqnarray*}
+ where the last equality follows from the induction hypothesis \eqref{keylma-2} 
+ when $| \eta |\leq n$.
+  The proof is completed by subtracting the last term on both sides. 
+ \end{proof}
+ %\textcolor{red}{
+ %\begin{remark}\label{rem-cumulant1}
+ %The assertion can be regarded as an extension of the Lemma~2 in \cite[p.~34]{MalyshevMinlos91}, which is presented in a language of dependency graph approach.
+ %\end{remark}
+ %}
+  In the particular case $r=1$, we note that when
+ $(X_1,\ldots , X_n)$ is a sequence of independent random variables, the functional 
+ $$
+ F(\rho) :
+ = \E\left[ \prod_{b \in \rho} \prod_{i \in b} X_i \right]
+ = \prod_{i \in [n]} \E [ X_i ]
+ % = \E\left[ \prod_{i \in [n]} X_i \right]
+ $$ 
+ satisfies
+ the {connectedness factorization} property \eqref{dia-factoriz},
+ and Proposition~\ref{mainthm-1}
+  recovers the vanishing of the joint cumulants
+  of $(X_i)_{i\in \eta}$ when $|\eta |\geq 2$, as
+  the set $\Pi_{\widehat{1}} ( \eta \times [1] )$
+  of connected partition diagrams on $\eta \times [1]$
+  is empty in this case. 
+ \vspace{-0.1cm}
+ \section{Cumulants of multiparameter stochastic integrals} 
+ \label{s4}
+ \vspace{-0.1cm}
+ \noindent 
+ % We write the set of $r$ vertices of the connected graph $G$ as $V_G = [r]$, and we denote by $E_G \subset V_G\times V_G$ the set of its edges. 
+  Consider a Poisson point process $\Xi$ on $\R^d$, $d \geq 1$, with intensity
+ measure $\Lambda$ on $\real^d$, % =\lambda\mu(\cdot)$, where $\mu$ is a probability measure on $\R^d$ having bounded density function with respect to the Lebesgue measure, and $\lambda>0$ is a constant. 
+ % Since $\Lambda$ is $\sigma$-finite and $\R^d$ is a Borel space,
+  constructed on the space $$
+  \Omega = \big\{
+  \omega = \{ x_i \}_{i\in I} \subset \R^d \ : \
+  \#( A \cap \omega ) < \infty 
+  \mbox{ for all compact } A\in {\cal B} (\R^d) 
+  \big\}
+  $$
+  of locally finite configurations on $\R^d$, whose elements 
+  $\omega \in \Omega$ are identified with the Radon point measures 
+  $\displaystyle \omega = \sum_{x\in \omega} \epsilon_x$, 
+  where $\epsilon_x$ denotes the Dirac measure at $x\in \R^d$. 
+  By \cite[Corollary~6.5]{LastPenrose17}, almost every
+  element $ \omega$ of $\Omega$ 
+  can be represented as $\omega =\{V_i\}_{1\leq i\leq N}$,
+  where $(V_i)_{i\geq 1}$ is a random sequence 
+  in $\R^d$ and a $\N\cup\{\infty\}$-valued random variable $N$.
+  % such that $\Xi$ can be almost surely represented as 
+ 
+ % \medskip
+ 
+  In this section, using sums over partitions
+  we express the moments of the multiparameter stochastic integral 
+ \begin{equation}
+ \label{e1}
+  \sum_{V_1,\dots,V_r \in\Xi} \ u_G (V_1,\ldots , V_r ) 
+  = \int_{(\real^d)^r} u_G (x_1,\ldots , x_r ) \omega (dx_1)\cdots \omega (dx_r), 
+ \end{equation} 
+  where $u_G (x_1,\ldots , x_r )$ is a measurable process of the form 
+ $$
+  u_G (x_1,\ldots , x_r ) := \prod_{(i,j) \in E(G)} v_{i,j}(x_i,x_j), 
+ $$
+ % where $E(G) \subset [r]\times [r]$ is the set of edges of $G$, 
+  and $v_{i,j}(x,y)$, $(i,j)\in E(G)$,
+  are random processes $v(x,y)$
+  independent of the underlying Poisson point process~$\Xi$. 
+  The next proposition is a consequence of Proposition~2 in \cite{prkhp}, 
+ which relies on Proposition~3.1 of \cite{momentpoi} % Theorem~3.1 of \cite{flint}
+ and Lemma~2.1 of \cite{bogdan}. 
+ 
+  \vspace{-0.2cm}
+ 
+ \begin{prop}
+ \label{p01-1-0} 
+ Let $n \geq 1$ and $r\geq 2$. 
+ The $n$-th moment of the multiparameter stochastic integral
+  \eqref{e1} is given by the summation 
+ \begin{equation} 
+ \label{nthexpectation0-0} 
+ \sum_{\rho \in \Pi ( [n] \times [r] )}
+ \int_{(\R^d )^{|\rho |}}
+ \E \left[
+   \prod_{k=1}^n
+ \prod_{% (\eta_{k,i},\eta_{k,j}) \in E(\rho_G) \atop
+ (i,j)\in E(G_k)}
+ v\big(x^\rho_{k,i},x^\rho_{k,j}\big) % ^{m({\eta_{k,i},\eta_{k,j}})}
+ \right] 
+    \ \! \prod_{\eta \in V(\rho_G)}
+    \Lambda(dx_\eta ),
+ \end{equation}
+  where we let $x_{k,l}^\rho:=x_\eta$ whenever $(k,l)\in \eta$,
+  for $\rho \in \Pi([n]\times [r])$ and $\eta\in\rho$.
+ % where $m ({\eta_1,\eta_2})$ represents the multiplicity of the edge $(\eta_1,\eta_2)$ in the multigraph $\widetilde{\rho}_G$. 
+ % and $V(\rho_G)$ denotes the set of vertices of the graph $\rho_G$. 
+ \end{prop}
+  The next proposition rewrites the product in \eqref{nthexpectation0-0} 
+  as a product on the edges of the graph $\rho_G$ 
+  similarly to Proposition~4 of \cite{prkhp} when $v(x,y)$ vanishes on
+  the diagonal, and it generalizes
+  Proposition~2.4 of \cite{jansen}
+  from two-parameter Poisson stochastic
+  integrals to multiparameter integrals of higher orders. 
+ 
+  \vspace{-0.2cm}
+ 
+  \begin{prop}
+ \label{p01-1-4} 
+ Let $n \geq 1$, $r\geq 2$, and assume that the process $v(x,y)$ vanishes
+ on diagonals, i.e. $v(x,x) = 0$, $x\in \real^d$. 
+ Then, the $n$-th moment of the multiparameter stochastic integral
+  \eqref{e1} is given by the summation 
+ \begin{equation} 
+ \nonumber % \label{nthexpectation0-1} 
+ \sum_{\rho \in \Pi ( [n] \times [r] )
+ \atop {
+     \rho \wedge \pi = \widehat{0}
+     \atop
+         {\rm (non-flat)}
+ }
+ }
+ \int_{(\R^d )^{|\rho |}}
+   \prod_{(\eta_1,\eta_2) \in E(\rho_G)}
+  \E \big[ v(x_{\eta_1},x_{\eta_2})^{m({\eta_1,\eta_2})} \big] 
+    \ \! \prod_{\eta \in V(\rho_G)}
+ \Lambda(dx_\eta ), 
+ \end{equation} 
+ over connected non-flat partition diagrams,
+ where $m ({\eta_1,\eta_2})$ represents the multiplicity of the edge
+ $(\eta_1,\eta_2)$ in the multigraph $\widetilde{\rho}_G$. 
+ % and $V(\rho_G)$ denotes the set of vertices of the graph $\rho_G$. 
+ \end{prop}
+ The next proposition is a consequence of Propositions~\ref{mainthm-1}
+ and \ref{p01-1-4},
+  and it also extends Proposition~2.5 of \cite{jansen}
+  from the two-parameter case to the multiparameter
+  case. 
+  Note that in our setting, the two-parameter case
+  only applies to the edge counting. 
+ 
+  \vspace{-0.2cm}
+ 
+ \begin{prop}
+ \label{p01-1} 
+ Let $n \geq 1$, $r \geq 2$, and assume that the process $v(x,y)$ vanishes
+ on diagonals, i.e. $v(x,x) = 0$, $x\in \real^d$. 
+ Then, the $n$-th cumulant of the multiparameter stochastic integral
+  \eqref{e1} is given by the summation 
+ \begin{equation}
+   \label{nthexpectation0-2}
+   % \kappa_n(N_G)=
+   \sum_{\rho \in \Pi_{\widehat{1}} ( [n] \times [r])
+     \atop
+     {\rho \wedge \pi = \widehat{0}
+     \atop {\rm (non-flat \ \! connected)}
+     }
+     }
+     \int_{(\R^d )^{|\rho |}}
+       \prod_{(\eta_1,\eta_2) \in E(\rho_G)}
+   \E \big[ v (x_{\eta_1},x_{\eta_2})^{m({\eta_1,\eta_2})} \big] 
+  \ \! \prod_{\eta \in V(\rho_G)}
+ \Lambda(dx_\eta )
+ \end{equation}
+ over connected non-flat partition diagrams.
+ \end{prop}
+ \begin{proof}
+  The functional 
+ \begin{equation}
+ \nonumber %    \label{pluggingin-1}
+ F(\rho ):=
+ \sum_{\rho \in \Pi ( [n] \times [r] )
+ \atop {
+     \rho \wedge \pi = \widehat{0}
+     \atop
+         {\rm (non-flat)}
+ }
+ }
+ \int_{(\R^d )^{|\rho |}}
+   \prod_{(\eta_1,\eta_2) \in E(\rho_G)}
+  \E \big[ v(x_{\eta_1},x_{\eta_2})^{m({\eta_1,\eta_2})} \big] 
+    \ \! \prod_{\eta \in V(\rho_G)}
+ \Lambda(dx_\eta )
+ \end{equation}
+  satisfies the connectedness factorization property
+  \eqref{dia-factoriz}, as for
+  $\sigma = b \times [r] \in \rho \vee \pi$ and
+  $\sigma' = b' \times [r] \in \rho \vee \pi$
+  with $b \not= b'$, the variables $(x_\eta )_{\eta \in \rho_b}$
+  are distinct from the variables $(x_\eta )_{\eta \in \rho_{b'}}$
+  in the above integration. 
+  Hence, \eqref{nthexpectation0-2} follows from Proposition~\ref{mainthm-1}. 
+ \end{proof}
+ \vspace{-0.1cm}
+ \section{Cumulants of subgraph counts} %  in the random-connection model}
+ \label{s5}
+ \vspace{-0.1cm}
+ \noindent
+  Let 
+ % $\Xi$ a point process with $\sigma$-finite intensity measure $\Lambda$ associated with
+  $H:\R^d\times\R^d\to[0,1]$ 
+  denote a % symmetric 
+  measurable connection function such that
+  \begin{equation}
+  \nonumber %  \label{integ-connecting}
+ 0<\int_{\real^d}H(x,y) \Lambda(dx)< \infty, 
+ \end{equation}
+  for all $y \in\R$. 
+  Given $\omega \in \Omega$, for any $x,y\in\omega$ with $x\not= y$,
+  an edge connecting $x$ and $y$ is added with probability $H(x,y)$,
+  independently of the other pairs, and in this case we write $x \leftrightarrow y$.
+  The resulting random graph, together with the point process $\Xi$,
+  is called the random-connection model and denoted by $G_H(\Xi)$.
+  % , and we write $V_i\leftrightarrow V_j$ if and only if $V_i,V_j\in\Xi$ are connected by an edge in $G_H(\Xi)$, $V_i\not= V_j$.
+ 
+ % \medskip
+ 
+  In the case where the connection function $H$ is given by $H(x,y) := \bone_{\{\|x-y\|\leq R\}}$ for some $R>0$, the resulting graph is completely determined by the geometric of the underlying point process $\Xi$, and is called a random geometric graph,
+  which is included as a special case in this paper. The main case of interest in this section is general RCM. We shall have further discussion about the random geometric graph in Section~\ref{rgg}, as we believe it is of independent interest. 
+ % $G_r(\Xi)$.
+ % Note for a set $A$, we write $|A|$ for its cardinality, and for $x\in\R^d$, denote by $\|x\|$ its Euclidean norm. In the case when $\Xi$ a binomial point process with $n$ points and $H(x,y)\equiv p$ for some $0<p<1$, edges are added independently between $n$ vertices despite their locations. The resulting graph obtained is so-called Erd\"os-R\'enyi graph $G_n(p)$. So one can regard the RCM as a combination of two classical models in random graph theory, Erd\"os-R\'enyi graph and random geometric graph, see \cite{LNS21,CanTrinh22} for some recent developments. 
+ % For the RCM $G_H(\Xi)$, let $E$ denote the set of all edges of $G_H(\Xi)$.
+ 
+ % \medskip
+ 
+ %  and we call the edge $(v_i,v_j)$ a {\it hop}. By {\it $k$-hop}, we mean a path with $k$ distinct edges. More precisely, given $\Xi$, $v_0,\dots,v_k\in\Xi$ (not necessarily to be distinct), if $v_{i-1}\leftrightarrow v_i$ for $i=1,\dots,k$, the path between $v_0$ and $v_k$ is called a $k$-hop, see \cite{kartun-giles} for more details. There are two type of $k$-hop count being of interest in this note:
+ % Note the assumption that $H(x,x)\equiv0$ in (\Ref{assmconn1}) eliminates the possibility of loops on the RCM, while circles are still permitted in $k$-hop.
+ % For the RCM $G_H(\Xi)$, let $E$ denote the set of all edges of $G_H(\Xi)$. When $\Xi$ is given, if $v_i,v_j\in\Xi$ are connected by an edge, we write $v_i\leftrightarrow v_j$ and we call the edge $(v_i,v_j)$ a {\it hop}. By {\it $k$-hop}, we mean a path with $k$ distinct edges. More precisely, given $\Xi$, $v_0,\dots,v_k\in\Xi$ (not necessarily to be distinct), if $v_{i-1}\leftrightarrow v_i$ for $i=1,\dots,k$, the path between $v_0$ and $v_k$ is called a $k$-hop, see \cite{kartun-giles} for more details. There are two type of $k$-hop count being of interest in this note:
+ % \begin{enumerate}[I.]
+ % \item $r+1$-hop connecting $x,y\in\R^d$: for $x,y$ fixed, $\tilde{\Xi}:=\Xi\cup\{x,y\}$. Let $N_{r+1}^{x,y}$ denote the total number of $r+1$-hop in the RCM $G_H(\tilde{\Xi})$ with endpoints $x$ and $y$, i.e. 
+ % \begin{equation}
+ % N_{r+1}^{x,y}:=\sum_{V_{i_1},\dots,V_{i_r}\in\Xi}\bone_{\{x\leftrightarrow V_{i_1}\}}\bone_{\{V_{i_1}\leftrightarrow V_{i_2}\}}\cdots\bone_{\{V_{i_{r-1}}\leftrightarrow V_{i_r}\}}\bone_{\{V_{i_r}\leftrightarrow y\}}.
+ % \end{equation}
+ % \item $k$-hop counts in general: When $\Lambda$ is a finite measure, denote by $N$ the total number of $k$-hop observed in the space, i.e. 
+ % \begin{equation}
+ % N_k:=\sum_{V_{i_0},\dots,V_{i_k}\in\Xi}\bone_{\{V_{i_0}\leftrightarrow V_{i_1}\}}\cdots\bone_{\{V_{i_{k-1}}\leftrightarrow V_{i_k}\}}.
+ % \end{equation}
+ % \end{enumerate}
+ % Note the assumption that $H(x,x)\equiv0$ in (\Ref{assmconn1}) eliminates the possibility of loops on the RCM, while circles are still permitted in $k$-hop.
+  
+  Given $G$ a connected graph with $|V(G)| = r$ vertices,
+  we denote $N_G$ the count of subgraphs isomorphic to $G$ in the
+  random-connection model $G_H( \Xi )$,
+  which can be represented as the multiparameter stochastic integral 
+ \begin{equation}
+ \nonumber % \label{subgraphcount}
+   N_G:=\sum_{V_1,\dots,V_r \in\Xi} \ 
+   \prod_{(i,j) \in E(G)} 
+   \bone_{\{V_i\leftrightarrow V_j\}}
+   = \int_{(\real^d)^r}
+   \prod_{(i,j) \in E(G)} 
+   \bone_{\{x_i\leftrightarrow x_j\}}
+   \ \! \Xi(\mathrm{d}x_1)\cdots \Xi(\mathrm{d}x_r), 
+ \end{equation}
+ up to division by the number of automorphisms of $G$.
+  Here, we have $\bone_{\{V_i\leftrightarrow V_j\}}=1$ or $0$ depending
+ whether $V_i$ and $V_j$ are connected or not by an edge
+ in $G_H(\Xi)$, with 
+ \begin{equation}
+ \label{jflds} 
+ \bone_{\{x\leftrightarrow x\}}=0, \qquad x\in \real^d. 
+ \end{equation}
+ % since the same vertex cannot be used twice which ensures that subgraphs are properly counted without gluing of vertices.
+ \noindent
+  The first moment of $N_G$ can be computed as 
+ \begin{equation}
+ \E [ N_G ] =\int_{(\R^d)^r}\left(\prod_{(i,j)\in E(G)}H(x_i,x_j)\right)\prod_{i=1}^r\Lambda(\mathrm{d}x_i).
+ \end{equation}
+  Higher order moments can be computed from the following result which
+ is a direct consequence of Proposition~\ref{p01-1}
+ by taking $v(x,y) : = \bone_{\{x \leftrightarrow y\}}$
+ in \eqref{nthexpectation0-2} and by using
+ {\em non-flat} partition diagrams $\Gamma(\rho,\pi )$
+  such that $\rho \wedge \pi = \widehat{0}$, 
+ % see Chapter~4 of \cite{peccatitaqqu} and Figure~\ref{fig:diagram2},
+  to take into account condition~\eqref{jflds}.  
+ 
+  \vspace{-0.2cm}
+ 
+ \begin{prop}
+  \label{lma-diagram1}
+ % \label{djklssa} 
+   Let $n \geq 1$ and $r\geq 2$.
+   The moments and cumulants of $N_G$ are given by the summation 
+ \begin{equation} 
+ \label{nthexpectation-2} 
+ \E [(N_G)^n] =
+ \sum_{\rho \in \Pi ( [n] \times [r] )
+   \atop {
+     \rho \wedge \pi = \widehat{0}
+     \atop
+         {\rm (non-flat)}
+   }
+ }
+ \int_{(\R^d )^{|\rho |}}
+ \Bigg(
+ \prod_{(\eta_1,\eta_2) \in E(\rho_G)}
+ H(x_{\eta_1},x_{\eta_2})
+ \Bigg)
+ \prod_{\eta \in V(\rho_G)}
+ \Lambda (\mathrm{d}x_\eta ), 
+ \end{equation} 
+  over non-flat partition diagrams, and by the summation   
+ \begin{equation}
+   \label{cumulant-diagram1}
+   \kappa_n(N_G)=\sum_{\rho \in \Pi_{\widehat{1}} ( [n] \times [r])
+     \atop
+     {\rho \wedge \pi = \widehat{0}
+     \atop {\rm (non-flat \ \! connected)}}
+   }
+   \int_{(\R^d )^{|\rho |}}
+   \Bigg(
+ \prod_{(\eta_1,\eta_2) \in E(\rho_G)}
+ H(x_{\eta_1},x_{\eta_2})
+ \Bigg)
+ \prod_{\eta \in V(\rho_G)}
+ \Lambda (\mathrm{d}x_\eta ), 
+ \end{equation} 
+  over connected non-flat partition diagrams. 
+ \end{prop}
+ \begin{proof}
+  Relations~\eqref{nthexpectation-2}-\eqref{cumulant-diagram1}
+  are consequence of Proposition~\ref{p01-1}, after taking
+   $v_{i,j}(x_i,x_j):=\bone_{\{x_i\leftrightarrow x_j\}}$,
+   $(i,j)\in E(G)$.
+   The summations are restricted to {\em non-flat} partition diagrams
+   due to condition~\eqref{jflds} as in Section~2 of \cite{prkhp}. 
+ \end{proof}
+ \vspace{-0.1cm}
+ \section{Asymptotic growth of subgraph count cumulants}
+ \label{s6}
+ \vspace{-0.1cm}
+ \noindent 
+ In this section we consider the following assumption,
+ where $(\Lambda_\lambda)_{\lambda >0}$ is a family 
+ of intensity measures on $\real^d$ and $H(x,y)$ is
+ on the connection function.
+ \begin{assumption}
+ \label{a61} 
+  Let $r\geq 2$ and $n \geq 1$.
+  There exist constants $c_H, C_{\mu , H} > 0$
+ % and a function $\lambda \mapsto f_\lambda \in (0,\infty )$
+  such that 
+  for any connected non-flat partition diagram $\Gamma(\rho ,\pi )$, 
+  $\rho \in \Pi_{\widehat{1}} ( [n] \times [r])$, we have 
+ \begin{equation}
+ \label{integ-connecting3}
+   c_H^{|E(\rho_G)|} ( \lambda C_{\mu , H} )^{|V(\rho_G)|}
+ \leq     \int_{\R^d}\cdots\int_{\R^d}
+ \Bigg(
+ \prod_{(i,j)\in E(\rho_G) }H(x_i,x_j)
+ \Bigg)
+ \
+ \prod_{k\in V(\rho_G) } \Lambda_\lambda (dx_k),
+ \quad \lambda >0. 
+ \end{equation}
+ \end{assumption}
+  We consider two settings satisfying Assumption~\ref{a61}.
+ 
+ % \vspace{-0.8cm}
+ 
+ % \smallskip
+ 
+ \label{page1}
+ \noindent
+ \begin{example}
+   \label{examplea}
+   Increasing intensity. 
+   When the intensity measure $\Lambda_\lambda$ takes the form 
+ $$\Lambda_\lambda (\mathrm{d}x)=\lambda\mu(\mathrm{d}x),\qquad\lambda>0,$$
+  for $\mu$ a finite diffuse measure on $\R^d$, 
+  Assumption~\ref{a61} is satisfied by any translation-invariant
+  continuous kernel function $H : \real^d\times \real^d \to [0,1]$ non vanishing at $(0,0)$. 
+  Indeed, in this case there exist $c_H>0$ and a Borel set $B\subset \real^d$
+  such that $\mu ( B)>0$ and
+ $$
+ H(x,y) = H(x-y,0) \geq c_H \bone_B(x)\bone_B(y), \qquad x,y \in \real^d,
+ $$
+ hence 
+ \begin{eqnarray*} 
+   c_H^{|E(\rho_G)|} ( \mu ( B ))^{|V(\rho_G)|} & = & 
+   c_H^{|E(\rho_G)|}
+   \int_B \cdots \int_B 
+   \prod_{k\in V(\rho_G) } \mu (dx_k)
+   \\
+    & \leq &  
+   \int_{\R^d}\cdots\int_{\R^d}
+   \Bigg(
+   \prod_{(i,j)\in E(\rho_G)} H(x_i,x_j)
+   \Bigg)
+   \prod_{k\in V(\rho_G) } \mu (dx_k), 
+ \end{eqnarray*}
+ so that we can take $C_{\mu , H} := \mu (B)$. 
+ \end{example}
+ The setting of Example~\ref{examplea}
+  includes the following long and short range dependence examples: 
+ \begin{enumerate} % [i)]
+ \item
+  the power-law fading kernel 
+  $H(x,y) = 1 \wedge \Vert x - y \Vert^{- \beta}$, $x,y\in \real^d$, for some $\beta > 0$,  
+ \item
+  the Rayleigh fading kernel $H(x,y) = e^{ - \beta \Vert x - y\Vert^2}$, $x,y\in \real^d$, for some $\beta > 0$, 
+ \item
+  the Boolean kernel $H(x,y)=\bone_{\{\|x-y\|\leq R \}}$, $x,y\in \real^d$,
+  for some $R >0$, which yields the random geometric graph, with
+ % $B$ the centered ball of radius $r/2$ in $\real^d$, and
+  $C_{\mu , H} = v_d (R /2)^d$,
+  where $v_d$ denotes the volume of the unit ball in $\real^d$. 
+ \end{enumerate}
+ % \smallskip
+ \vspace{-0.8cm}
+ \noindent
+ \label{page2}
+ \begin{example}
+   \label{exampleb}
+   Growing observation window. 
+   When the intensity measure $\Lambda_\lambda$ takes the form 
+ $$\Lambda_\lambda (\mathrm{d}x)= {\bf 1}_{A_\lambda} (x) \mu(\mathrm{d}x),\qquad\lambda>0,$$
+   where $(A_\lambda )_{\lambda >0}$ is a non-decreasing sequence
+   of Borel subsets of $\real^d$, 
+   $\mu$ a % finite
+   diffuse Radon measure on $\R^d$, 
+   and the kernel function $H : \real^d\times \real^d \to [0,1]$
+   is lower bounded as $H(x,y) \geq c_H$, $x,y\in \real^d$ for some $c_H>0$,
+   Assumption~\ref{a61} is satisfied with 
+   $\mu ( A_\lambda ) = C_{\mu , H} \lambda$,
+   e.g. when $A_\lambda$ is  the ball of radius $\lambda^{1/d} >0$
+   and $\mu$ is the Lebesgue measure on $\real^d$,
+   with $C_{\mu , H} = v_d$. 
+ \end{example} 
+ 
+ % \medskip
+  
+ \noindent
+ % In addition, the measurable connection function $H: \R^d \times \R^d \to[0,1]$ is assumed to be symmetric and translation invariant, i.e. $H(x,y)=H(0,y-x)$, $x,y\in\R^d$.
+  Next, we investigate the asymptotic behaviour of the cumulants $\kappa_n(N_G)$
+ as the intensity $\lambda$ tends to infinity, as a consequence of the partition diagram representation of cumulant. 
+ In what follows, given two positive functions $f$ and $g$ on $(1,\infty )$ we write
+ $f(\lambda ) \ll g(\lambda )$ if 
+ $\lim_{\lambda \to \infty} g(\lambda ) / f(\lambda ) = \infty$.
+ 
+ \vspace{-0.2cm}
+ 
+ \begin{definition}
+   For every $\lambda >0$,
+   let $G_{H_\lambda} (\Xi)$
+   denote the random-connection model
+   with connection function 
+   $$
+   H_\lambda(x,y):= c_\lambda H(x,y),
+   \qquad x,y \real^d.
+   $$ 
+ We consider the following regimes. 
+ \begin{itemize}
+ % \item Full random graph regime: $c_\lambda = 1 $, $\lambda > 0$. 
+ \item Dilute regime: for some constant $K>0$ we have 
+ \begin{equation}
+     \label{fjnldsf}
+     \frac{1}{\lambda} \ll c_\lambda \leq K,
+     \qquad
+     \lambda\to \infty.
+ \end{equation} 
+ \item Sparse regime: for some constants $K>0$ and $\alpha \geq 1$ we have
+   \begin{equation}
+     \label{fjnldsf-2}
+     c_\lambda \leq \frac{K}{\lambda^\alpha},
+         \qquad
+     \lambda\to \infty. 
+     \end{equation} % for some $C>0$. 
+ \end{itemize} 
+ \end{definition}
+ 
+ \vspace{-0.4cm}
+ 
+ \noindent
+ In case $c_\lambda = K$ for all $\lambda > 0$
+ we also say that we are in the full random graph regime,
+ and in the sequel we take $K=1$ for simplicity.
+ % since $\prod_{1\leq i,j\leq k}H(x_i,x_j)\le\prod_{(i,j)\in E(G) }H(x_i,x_j)\le1$
+ % we have the following estimate by taking $R=\beta^{-1/2}$,
+ % \subsubsection*{Dilute regime}
+ % \noindent
+ % In what follows, we write $u(\lambda)\asymp v(\lambda)$ if the ratio $u(\lambda)/v(\lambda)$ is bounded away from $0$ and away from infinity by constants depending only on $H$ and $G$ as $\lambda$ tends to infinity. 
+ 
+  \vspace{-0.2cm}
+ 
+ \begin{prop}[Dilute regime]
+ \label{t1}
+   %Let the above notations and assumptions prevail.
+ Let $G$ be a connected graph with $|V(G)| = r$ vertices, $r\geq 2$, 
+ satisfying
+ Assumption~\ref{a61} for all $n\geq 1$
+ in the dilute regime \eqref{fjnldsf}. 
+   We have the cumulant bounds 
+ \begin{equation}
+ \label{equiv-1}
+  (n-1)! c_\lambda^{n |E(G)| } ( K_1 \lambda )^{1+(r-1)n}
+  \leq 
+  \kappa_n(N_G)
+  \leq 
+  n!^r c_\lambda^{n |E(G) |} ( K_2 \lambda )^{1+(r-1)n} 
+ \end{equation}
+ for some constants $K_1$, $K_2>0$ independent of $\lambda>0$ and $n\geq 1$.
+ % where $\gamma\ge0$ and $\Delta>0$ are some constant. 
+ % for some constant $K>0$ independent of $\lambda, n\geq 1$. 
+ \end{prop} 
+ \begin{proof}
+   % Under \eqref{integ-connecting},
+   % in Proposition~\ref{lma-diagram1}
+   % when $H_\lambda(x,y):= H(x,y)$, 
+  % For our analysis of cumulant behavior
+  We identify the leading terms in the sum \eqref{cumulant-diagram1}
+  over connected partition diagrams, knowing that every
+  vertex in $\rho_G$ contributes a factor $\lambda$, and that 
+  every edge contributes a factor $c_\lambda$,
+  therefore every summand in \eqref{cumulant-diagram1}
+  contributes a factor $c_\lambda^{|E(\rho_G)|} \lambda^{|V(\rho_G)|}$. 
+ 
+ % \medskip
+ 
+  Modifying $\rho \in\Pi_{\widehat{1}} ([n]\times[r])$ by splitting a block in two 
+   means adding a vertex to $\rho_G$, and therefore a adding factor $\lambda$
+   to the corresponding term in \eqref{cumulant-diagram1}.
+   At the same time, this entails no loss of edge but possibly 
+   the addition of an edge to $\rho_G$, which results into
+   an additional factor $c_\lambda$ with $\lambda c_\lambda \gg 1$
+   by \eqref{fjnldsf}. 
+   Hence, the leading terms in \eqref{cumulant-diagram1} are those associated
+   with the connected partition diagrams $\Gamma(\rho ,\pi )$ having the highest
+   block count, i.e. which have $1+(r-1)n$ blocks, see Figure~\ref{fig:diagram3}
+   for a sample of such partition diagram.
+ 
+ % \medskip
+ 
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ and graph $\widetilde{\rho}_G$ in blue.}[.5\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,1); 
+ 
+ \foreach \i in {1,...,5}
+          {
+            \draw[thick,dash dot,blue] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,blue] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,blue] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+            \draw[thick,dash dot,blue] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+          }
+ \end{tikzpicture}}%
+   }
+     \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho ,\pi)$ and graph $\rho_G$ in red.}[.5\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,1); 
+ 
+ \foreach \i in {1,...,5}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+          }
+ \end{tikzpicture}}%
+     }
+     \caption{Example of maximal connected partition diagram with $n=5$ and $r=4$.}
+ \label{fig:diagram3}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ \noindent
+  Finally, we observe that any maximal partition $\rho$ satisfies
+ % Also, for any $\rho\in\mathcal{M}(n,r)$, 
+ $|E(\rho_G)|=n\times|E(G)|$, 
+ as can be checked in Figure~\ref{fig:diagram3}.
+ % That is because, essentially, $\rho_G$ is obtained by merging vertices between $n$ replica of $G$ and making them connected without ``gluing'' edges. 
+  Therefore, by % virtue of the
+  \eqref{coeff-0}-\eqref{coeff-1},
+  \eqref{cumulant-diagram1} and \eqref{integ-connecting3}, we obtain 
+ \begin{eqnarray*} 
+   \lefteqn{
+     c^{n|E(G)|}
+     C^{1+(r-1)n}
+     c_\lambda^{n|E(G)|}
+     ( (r-1)r )^{n-1}(n-1)!
+     \lambda^{1+(r-1)n}
+   }
+   \\
+    & \leq &   
+     \lambda^{1+(r-1)n}
+         c_\lambda^{n|E(G)|}
+   \sum_{\rho\in\mathcal{M}(n,r)}\int_{(\R^d)^{1+(r-1)n}}
+   \Bigg(
+   \prod_{(\eta_1,\eta_2)\in E(\rho_G)}H_\lambda(x_{\eta_1},x_{\eta_2})
+   \Bigg)
+   \prod_{\eta\in V(\rho_G)}\mu(dx_{\eta}),
+   \\
+    & \leq &     \kappa_n(N_G)
+ % \\  & \leq &   K  B_{nr}  \lambda^{1+(r-1)n}  (\mu ( \real^d))^{1+(r-1)n}  c_\lambda^{n|E(G)|}
+ % \\  & \leq &   K  (nr)!   \lambda^{1+(r-1)n}  (\mu ( \real^d))^{1+(r-1)n}  c_\lambda^{n|E(G)|}
+       \\
+   & \leq & 
+   n!^r r!^{n-1} 
+   (\mu ( \real^d))^{1+(r-1)n}
+   c_\lambda^{n|E(G)|}
+  \lambda^{1+(r-1)n}, 
+ \end{eqnarray*}
+ %  & \asymp &
+ %  a_n\lambda^{1+(r-1)n}
+ %  \int_{(\R^d )^{1+(r-1)n}} 
+ %  \prod_{i=1}^{1+(r-1)n}
+ %       H(x_1,x_i ) 
+ %  \ \! \mu(dx_1)\cdots \mu (dx_{1+(r-1)n}) 
+ %  \\
+ which yields \eqref{equiv-1}.
+ \end{proof}
+  In what follows, we consider the centered and normalized subgraph count cumulants defined as 
+  $$
+  \widetilde{N}_G
+  := \frac{N_G - \kappa_1 (N_G)}{\sqrt{\kappa_2(N_G)}}, \qquad n \geq 1. 
+ $$
+  The following result shows that for $n\geq 3$ the normalized cumulant
+  $\kappa_n(\widetilde{N}_G)$ tends to zero in \eqref{Statuleviciuscond},
+  hence $\widetilde{N}_G$ converges in distribution to the normal
+  distribution by Theorem~1 in \cite{Janson1988}.   
+ \begin{corollary}[Dilute regime]
+ \label{t1-c}
+   %Let the above notations and assumptions prevail.
+ Let $G$ be a connected graph with $|V(G)| = r$ vertices, $r\geq 2$, 
+ satisfying 
+   Assumption~\ref{a61} for $n=2$ in the dilute regime \eqref{fjnldsf}. 
+   We have the normalized cumulant bounds 
+  \begin{equation}
+     \label{Statuleviciuscond}
+   \big|\kappa_n \big(\widetilde{N}_G\big)\big|
+   \leq n!^r ( K \lambda )^{-(n/2-1)},
+ %  \le\frac{n!^{1+\gamma}}{\Delta^{n-2}},
+   \qquad \lambda \geq 1, \quad n\geq 2,
+ \end{equation}
+ where $K>0$ is a constant independent of $\lambda >0$ and $n\geq 1$.
+ % where $\gamma\ge0$ and $\Delta>0$ are some constant. 
+ % for some constant $K>0$ independent of $\lambda, n\geq 1$. 
+ \end{corollary}
+ \begin{proof}
+   We note that the upper bound in \eqref{equiv-1}
+   does not require Assumption~\ref{a61},
+   hence we have, for $n\geq 2$,
+ $$ 
+    \big|\kappa_n(\widetilde{N}_G)\big|
+   \leq 
+    \frac{n!^r % r!^n
+      c_\lambda^{n|E(G)|} (K_2 \lambda )^{1+(r-1)n}}{\big((2-1)! c_\lambda^{2|E(G)|}
+    (K_1 \lambda )^{1+2(r-1)}\big)^{n/2}}
+  = 
+    K_2
+    \left(
+    \frac{ % r!
+       (K_2/K_1)^{r-1}}{\sqrt{K_1}}
+    \right)^n
+    n!^r \lambda^{-(n/2-1)}. 
+ $$ 
+ \end{proof}
+ The following result yields a positive cumulant growth
+ of order $\alpha     -(\alpha - 1)r>0$
+ in \eqref{cumulant-rhop2-0} for trees in the sparse regime
+ with $\alpha \in [1, r/(r-1) )$,
+ while in the case of non-tree graphs such as
+ cycle graphs the growth rate
+ $r - \alpha |E(G)|
+ \leq ( 1 - \alpha ) r \leq 0$
+ is negative or zero in \eqref{cumulant-rhoph1} and \eqref{cumulant-rhoph2}. 
+ In addition, the normalized cumulant 
+ $\kappa_n(\widetilde{N}_G)$ tends to zero for $n\geq 3$ in \eqref{jfkla} only
+ when $G$ is a tree, in which case 
+ $\widetilde{N}_G$ converges in distribution to the normal
+ distribution by Theorem~1 in \cite{Janson1988}.   
+ We note that when $\alpha = 1$, \eqref{jfkla} is consistent with
+  \eqref{Statuleviciuscond}. 
+ 
+  \vspace{-0.2cm}
+ 
+ \begin{prop}[Sparse regime] 
+ \label{th6.4}
+   % Let $G$ be a tree graph with $r$ edges. 
+   Let $G$ be a connected graph with $|V(G)|=r$ vertices, $r\geq 2$,
+   satisfying Assumption~\ref{a61} for all $n\geq 1$
+   in the sparse regime \eqref{fjnldsf-2}. 
+   \begin{enumerate} % [a)] 
+   \item 
+  If $G$ is a tree, i.e. $|E(G)| = r-1$, we have the cumulant bounds % equivalence 
+ \begin{equation} 
+ \label{cumulant-rhop2-0}
+   (K_1)^{(r-1)n}
+  \lambda^{\alpha  -(\alpha - 1)r }
+      \leq 
+ % \lambda  \sum_{k=r}^{1+(r-1)n}          (K_1)^k {\cal N}^{(n,r)}_k      \leq 
+   \kappa_n(N_G)
+   %  \leq  \lambda  \sum_{k=r}^{1+(r-1)n} (K_2)^k {\cal N}^{(n,r)}_k
+   \leq 
+   n!^r
+   % r!^n
+   (K_2)^{(r-1)n} \lambda^{ \alpha     -(\alpha - 1)r       } , 
+ \end{equation} 
+  for some constants $K_1>0$, $K_2>1$ independent of $\lambda, n\geq 1$.
+ % where ${\cal N}^{(n,r)}_k$ denotes the number of connected partitions $\rho\in\Pi_{\widehat{1}} ([n]\times[r])$ for which $\rho_G$ is a tree with $k$ vertices,
+ \item
+  If $G$ is not a tree, i.e. $|E(G)|\geq r$,
+  we have the cumulant bounds % equivalence 
+  \begin{equation} 
+  \label{cumulant-rhoph1}
+   (K_1)^r 
+  \lambda^{r-\alpha |E(G)|}
+  \leq 
+   \kappa_n(N_G)
+   \leq
+    n!^r
+   % r!^n
+    (K_2)^{(r-1)n}
+    \lambda^{r-\alpha |E(G)|}, 
+ \end{equation} 
+  for some constants $K_1>0$, $K_2>1$ independent of $\lambda, n\geq 1$. 
+ \item
+   If $G$ is a cycle, i.e. $|E(G)| = r$,
+   we have the cumulant bounds % equivalence 
+  \begin{equation} 
+ \label{cumulant-rhoph2}
+   (K_1)^r 
+  \lambda^{- (\alpha - 1 )r}
+ \leq 
+   \kappa_n(N_G)
+   \leq
+   n!^r
+  % r!^n
+   (K_2)^{(r-1)n}
+     \lambda^{ - (\alpha -1)r}, 
+ \end{equation} 
+  for some constants $K_1>0$, $K_2>1$ independent of $\lambda, n\geq 1$. 
+ \end{enumerate}
+ \end{prop}
+ \begin{proof}
+   In the sparse regime \eqref{fjnldsf-2}, 
+   every edge in the graph $\rho_G$ contributes a power $\lambda^{-\alpha}$
+   and every vertex contributes a power $\lambda$,
+   hence every term in \eqref{cumulant-diagram1} contributes a power
+   \begin{equation}
+     \label{fjkld34} 
+   \lambda^{|V(\rho_G)| - \alpha |E(\rho_G)|}
+   =
+   \lambda^{    \alpha    - (\alpha - 1 ) |V(\rho_G)|    + ( |V (\rho_G)| - |E(\rho_G)| - 1 ) \alpha  }
+  \leq
+  \lambda^{   \alpha   - (\alpha - 1 ) |V(\rho_G)|     }
+ \end{equation} 
+   since $|V (\rho_G)| - |E(\rho_G)| - 1 \leq 0$. 
+   In addition, for any connected partition diagram
+   $\Gamma(\rho ,\pi )$ with $\rho\in\Pi_{\widehat{1}} ([n]\times[r])$,
+   we have 
+   $$r\le|V(\rho_G)|\leq 1+(r-1)n. 
+   $$ 
+     
+ % \medskip
+   
+ \noindent
+  $a)$
+  When $G$ is a tree and the graph $\rho_G$ is also a tree, 
+  i.e. $|V (\rho_G)| - |E(\rho_G)| - 1 = 0$, and 
+  the maximal order 
+  $\lambda^{
+    \alpha
+    - (\alpha - 1 ) |V(\rho_G)|
+      }
+  $ is attained in \eqref{fjkld34}, 
+   see Figure~\ref{fig:diagram2-1-4} for an example.
+ 
+ % \smallskip
+ 
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ and multigraph $\widetilde{\rho}_G$ in blue.}[.5\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4); 
+ \draw[very thick] (3,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,2) -- (2,4);
+ \draw[very thick] (2,1) -- (3,2) -- (4,3) -- (3,4);
+ 
+ \foreach \i in {1,...,5}
+          {
+            \draw[thick,dash dot,blue] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,blue] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+ %           \draw[thick,dash dot,blue] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,blue] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+ \end{tikzpicture}}%
+   }
+   \scalebox{0.75}{
+   \subcaptionbox{Diagram $\Gamma(\sigma,\pi)$ and graph $\rho_G$ in red.}[.5\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \draw[very thick] (1,5) -- (1,4); 
+ \draw[very thick] (3,5) -- (4,4);
+ 
+ \draw[very thick] (1,2) -- (1,1);
+ \draw[very thick] (2,2) -- (2,4);
+ \draw[very thick] (2,1) -- (3,2) -- (4,3) -- (3,4);
+ 
+ \foreach \i in {1,...,3}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+ %           \draw[thick,dash dot,blue] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+ 
+            \draw[thick,dash dot,purple] (1,4) .. controls (1.5,4+.5) .. (2,4);
+ %           \draw[thick,dash dot,blue] (2,2) .. controls (2.5,2+.5) .. (3,2);
+  %          \draw[thick,dash dot,blue] (3,4) .. controls (3.5,4+.5) .. (4,4);
+            \draw[thick,dash dot,purple] (2,4) .. controls (3,4-.5) .. (4,4);
+ \foreach \i in {5,...,5}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            %\draw[thick,dash dot,blue] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+ \end{tikzpicture}}%
+   }
+   \caption{Example of connected partition diagram with $\rho_G$ a tree and $n=5$, $r=4$.}
+ % Connected non-flat partition diagram with $G$ a tree and $n=5$, $r=4$.}
+ \label{fig:diagram2-1-4}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ \noindent
+  In this case, the corresponding term in \eqref{cumulant-diagram1} contributes a power
+ $$
+  \lambda^{|V(\rho_G)|-\alpha|E(\rho_G)|}
+   =
+   \lambda^{
+     \alpha
+     - (\alpha - 1 ) |V(\rho_G)|
+   }, 
+   \qquad \lambda \geq 1. 
+   $$
+ % which reaches the maximal rate in \eqref{fjkld34}. 
+  In this case, since $|V(\rho_G)|\geq r$ and $\alpha \geq 1$, the optimal rate
+  $\lambda^{ \alpha - ( \alpha - 1 ) r }$
+  is attained by the partition diagrams
+   $\Gamma(\rho ,\pi )$ such that 
+   $|V(\rho_G )|=r$, as illustrated in Figure~\ref{fig:diagram4-0}. 
+   
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ and multigraph $\widetilde{\rho}_G$ in blue.}[.5\textwidth]{%
+ \begin{tikzpicture}
+ 
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \foreach \i in {1,...,4}
+ {
+ \draw[very thick] (\i,5) -- (\i,1); 
+ }
+ 
+   \foreach \i in {1,...,5}
+          {
+            \draw[thick,dash dot,blue] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,blue] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+ %           \draw[thick,dash dot,blue] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,blue] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+          
+ \end{tikzpicture}}%
+   }
+     \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ and graph $\rho_G$ in red.}[.5\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,6);
+ 
+ \node[anchor=east,font=\small] at (0.8,5) {1};
+ \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {3};
+ \node[anchor=east,font=\small] at (0.8,2) {4};
+ \node[anchor=east,font=\small] at (0.8,1) {5};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (1,4) circle (2pt);
+ \filldraw [gray] (2,4) circle (2pt);
+ \filldraw [gray] (3,4) circle (2pt);
+ \filldraw [gray] (4,4) circle (2pt);
+ \filldraw [gray] (1,5) circle (2pt);
+ \filldraw [gray] (2,5) circle (2pt);
+ \filldraw [gray] (3,5) circle (2pt);
+ \filldraw [gray] (4,5) circle (2pt);
+ 
+ \foreach \i in {1,...,4}
+ {
+ \draw[very thick] (\i,5) -- (\i,1); 
+ }
+ 
+ \foreach \i in {5,...,5}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            %\draw[thick,dash dot,blue] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+          
+ \end{tikzpicture}}%
+     }
+     \caption{Tree diagram $\rho_G$ with $G$ a tree with $|V(\rho_G)|=r$ and $n=5$, $r=4$.}
+ \label{fig:diagram4-0}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ \noindent
+  We conclude to \eqref{cumulant-rhop2-0} 
+  as in the proof of Proposition~\ref{t1}, 
+  by upper bounding the count of connected partitions from \eqref{coeff-0}
+  and by lower bounding it by $1$. 
+ 
+  \noindent
+    $b)$ 
+    When $G$ is not a tree it contains at least one cycle, and
+    for any partition $\rho\in\Pi_{\widehat{1}} ([n]\times[r])$  
+    the same holds for the graph $\rho_G$. 
+ In this case, the highest order contribution in
+ \eqref{cumulant-diagram1} is attained by connected non-flat partition diagrams 
+ $\Gamma ( \rho , \pi )$, $\rho\in\Pi_{\widehat{1}} ([n]\times[r])$,
+ such that $\rho_G$ has $|V(\rho_G)| = r$ vertices, 
+ and their contribution is given by a power of order $\lambda^{r-\alpha |E(G)|}$. 
+  An example of such partition diagram $\rho$ is given in Figure~\ref{fig:diagram4}, 
+  with $G$ a cycle. 
+ 
+ % \smallskip
+ 
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ and multigraph $\widetilde{\rho}_G$ in blue.}[.5\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,4);
+ 
+ % \node[anchor=east,font=\small] at (0.8,5) {1};
+ % \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {1};
+ \node[anchor=east,font=\small] at (0.8,2) {2};
+ \node[anchor=east,font=\small] at (0.8,1) {3};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ % \filldraw [gray] (1,4) circle (2pt);
+ % \filldraw [gray] (2,4) circle (2pt);
+ % \filldraw [gray] (3,4) circle (2pt);
+ % \filldraw [gray] (4,4) circle (2pt);
+ % \filldraw [gray] (1,5) circle (2pt);
+ % \filldraw [gray] (2,5) circle (2pt);
+ % \filldraw [gray] (3,5) circle (2pt);
+ % \filldraw [gray] (4,5) circle (2pt);
+ 
+ \foreach \i in {1,...,4}
+ {
+ \draw[very thick] (\i,3) -- (\i,1); 
+ }
+ 
+ \foreach \i in {1,...,3}
+          {
+            \draw[thick,dash dot,blue] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,blue] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,blue] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,blue] (4,\i) .. controls (2.5,\i-.5) .. (1,\i);
+          }
+ \end{tikzpicture}}%
+   }
+   \scalebox{0.75}{
+   \subcaptionbox{Diagram $\Gamma(\sigma,\pi)$ and graph $\rho_G$ in red.}[.5\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,4);
+ 
+ % \node[anchor=east,font=\small] at (0.8,5) {1};
+ % \node[anchor=east,font=\small] at (0.8,4) {2};
+ \node[anchor=east,font=\small] at (0.8,3) {1};
+ \node[anchor=east,font=\small] at (0.8,2) {2};
+ \node[anchor=east,font=\small] at (0.8,1) {3};
+ 
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ % \filldraw [gray] (1,4) circle (2pt);
+ % \filldraw [gray] (2,4) circle (2pt);
+ % \filldraw [gray] (3,4) circle (2pt);
+ % \filldraw [gray] (4,4) circle (2pt);
+ % \filldraw [gray] (1,5) circle (2pt);
+ % \filldraw [gray] (2,5) circle (2pt);
+ % \filldraw [gray] (3,5) circle (2pt);
+ % \filldraw [gray] (4,5) circle (2pt);
+ 
+ \foreach \i in {1,...,4}
+ {
+ \draw[very thick] (\i,3) -- (\i,1); 
+ }
+ 
+            \draw[thick,dash dot,purple] (1,3) .. controls (1.5,3+.5) .. (2,3);
+            \draw[thick,dash dot,purple] (2,3) .. controls (2.5,3+.5) .. (3,3);
+            \draw[thick,dash dot,purple] (3,3) .. controls (3.5,3+.5) .. (4,3);
+            \draw[thick,dash dot,purple] (4,3) .. controls (2.5,3-.5) .. (1,3);
+          
+ \end{tikzpicture}}%
+   }
+   \caption{Cycle diagram $\rho_G$ with $G$ a cycle graph and $n=5$, $r=4$.}
+ \label{fig:diagram4}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ \noindent
+  Indeed, in order to remain non flat,
+  the partition diagram~$\rho$ can only be modified
+  into a partition diagram~$\sigma$ by splitting a block of $\rho_G$ in two, 
+  which entails the addition of a number $q$ of edges, $q\geq 1$, 
+  resulting into an additional factor $\lambda^{1- q \alpha} \leq 1$ 
+  that may only lower the order of the contribution, see
+  Figures~\ref{fig:diagram3-1-0}-\ref{fig:diagram3-1-3}
+  for an example where $G$ is a graph with one cycle.
+  
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ with order $\lambda^{4-4\alpha}$.}[.47\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,4);
+ 
+ \node[anchor=east,font=\small] at (0.8,3) {1};
+ \node[anchor=east,font=\small] at (0.8,2) {2};
+ \node[anchor=east,font=\small] at (0.8,1) {3};
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ 
+ \draw[very thick] (1,1) -- (1,1) -- (1,3);
+ \draw[very thick] (2,1) -- (2,1) -- (2,3);
+ \draw[very thick] (3,1) -- (3,1) -- (3,3);
+ \draw[very thick] (4,1) -- (4,1) -- (4,3);
+ \foreach \i in {3}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+          
+ \end{tikzpicture}}
+   }
+   \hfill
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\sigma,\pi)$ with order $\lambda^{5-5\alpha}= \lambda^{4-4\alpha}\lambda^{- ( \alpha - 1)}$.}[.52\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,4);
+ 
+ \node[anchor=east,font=\small] at (0.8,3) {1};
+ \node[anchor=east,font=\small] at (0.8,2) {2};
+ \node[anchor=east,font=\small] at (0.8,1) {3};
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ 
+ % \draw[very thick] (1,1) -- (1,1) -- (1,3);
+ \draw[very thick] (1,1) -- (1,2);
+ \draw[very thick] (2,1) -- (2,1) -- (2,3);
+ \draw[very thick] (3,1) -- (3,1) -- (3,3);
+ \draw[very thick] (4,1) -- (4,1) -- (4,3);
+ 
+ \draw[thick,dash dot,purple] (1,2) .. controls (1.5,2.5) .. (2,2);
+ 
+ \foreach \i in {3}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+          
+ \end{tikzpicture}}
+   }
+   \caption{Splitting of a vertex with addition of one edge and $n=3$, $r=4$.}
+ \label{fig:diagram3-1-0}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ \vspace{-1cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ with order $\lambda^{4-4\alpha}$.}[.49\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,4);
+ 
+ \node[anchor=east,font=\small] at (0.8,3) {1};
+ \node[anchor=east,font=\small] at (0.8,2) {2};
+ \node[anchor=east,font=\small] at (0.8,1) {3};
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ 
+ \draw[very thick] (1,1) -- (1,1) -- (1,3);
+ \draw[very thick] (2,1) -- (2,1) -- (2,3);
+ \draw[very thick] (3,1) -- (3,1) -- (3,3);
+ \draw[very thick] (4,1) -- (4,1) -- (4,3);
+ \foreach \i in {3}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+          
+ \end{tikzpicture}}
+   }
+   \hfill
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\sigma,\pi)$ with order $\lambda^{5-6\alpha}=\lambda^{4-4\alpha}\lambda^{1-2\alpha}$.}[.49\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,4);
+ 
+ \node[anchor=east,font=\small] at (0.8,3) {1};
+ \node[anchor=east,font=\small] at (0.8,2) {2};
+ \node[anchor=east,font=\small] at (0.8,1) {3};
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ 
+ \draw[very thick] (1,1) -- (1,1) -- (1,3);
+ % \draw[very thick] (2,1) -- (2,1) -- (2,3);
+ \draw[very thick] (2,1) -- (2,2);
+ \draw[very thick] (3,1) -- (3,1) -- (3,3);
+ \draw[very thick] (4,1) -- (4,1) -- (4,3);
+ 
+ \draw[thick,dash dot,purple] (1,2) .. controls (1.5,2.5) .. (2,2);
+ \draw[thick,dash dot,purple] (2,2) .. controls (2.5,2.5) .. (3,2);
+ \draw[thick,dash dot,purple] (2,2) .. controls (3,1.5) .. (4,2);
+ 
+ 
+ \foreach \i in {3}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+          
+ \end{tikzpicture}}
+   }
+   \caption{Splitting of a vertex with addition of three edges and $n=3$, $r=4$.}
+ % \label{fig:diagram3-1-1}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ % \smallskip
+ 
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ with order $\lambda^{4-4\alpha}$.}[.49\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,4);
+ 
+ \node[anchor=east,font=\small] at (0.8,3) {1};
+ \node[anchor=east,font=\small] at (0.8,2) {2};
+ \node[anchor=east,font=\small] at (0.8,1) {3};
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ 
+ \draw[very thick] (1,1) -- (1,1) -- (1,3);
+ \draw[very thick] (2,1) -- (2,1) -- (2,3);
+ \draw[very thick] (3,1) -- (3,1) -- (3,3);
+ \draw[very thick] (4,1) -- (4,1) -- (4,3);
+ \foreach \i in {3}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+          
+ \end{tikzpicture}}
+   }
+   \hfill
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\sigma,\pi)$ with order $\lambda^{5-6\alpha}=\lambda^{4-4\alpha}\lambda^{1-2\alpha}$.}[.49\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,4);
+ 
+ \node[anchor=east,font=\small] at (0.8,3) {1};
+ \node[anchor=east,font=\small] at (0.8,2) {2};
+ \node[anchor=east,font=\small] at (0.8,1) {3};
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ 
+ \draw[very thick] (1,1) -- (1,1) -- (1,3);
+ \draw[very thick] (2,1) -- (2,1) -- (2,3);
+ % \draw[very thick] (3,1) -- (3,1) -- (3,3);
+ \draw[very thick] (3,1) -- (3,2);
+ \draw[very thick] (4,1) -- (4,1) -- (4,3);
+ 
+ \draw[thick,dash dot,purple] (2,2) .. controls (2.5,2.5) .. (3,2);
+ \draw[thick,dash dot,purple] (3,2) .. controls (3.5,2.5) .. (4,2);
+ 
+ 
+ \foreach \i in {3}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+          
+ \end{tikzpicture}}
+   }
+   \caption{Splitting of a vertex with addition of two edges and $n=3$, $r=4$.}
+ % \label{fig:diagram3-1-2}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ % \smallskip
+ 
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\rho,\pi)$ with order $\lambda^{4-4\alpha}$.}[.49\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,4);
+ 
+ \node[anchor=east,font=\small] at (0.8,3) {1};
+ \node[anchor=east,font=\small] at (0.8,2) {2};
+ \node[anchor=east,font=\small] at (0.8,1) {3};
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ 
+ \draw[very thick] (1,1) -- (1,1) -- (1,3);
+ \draw[very thick] (2,1) -- (2,1) -- (2,3);
+ \draw[very thick] (3,1) -- (3,1) -- (3,3);
+ \draw[very thick] (4,1) -- (4,1) -- (4,3);
+ \foreach \i in {3}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+          
+ \end{tikzpicture}}
+   }
+   \hfill
+   \scalebox{0.75}{
+ \subcaptionbox{Diagram $\Gamma(\sigma,\pi)$ with order $\lambda^{5-6\alpha}=\lambda^{4-4\alpha}\lambda^{1-2\alpha}$.}[.49\textwidth]{
+ \begin{tikzpicture}
+ \draw[black, thick] (0,0) rectangle (5,4);
+ 
+ \node[anchor=east,font=\small] at (0.8,3) {1};
+ \node[anchor=east,font=\small] at (0.8,2) {2};
+ \node[anchor=east,font=\small] at (0.8,1) {3};
+ \node[anchor=south,font=\small] at (1,0) {1};
+ \node[anchor=south,font=\small] at (2,0) {2};
+ \node[anchor=south,font=\small] at (3,0) {3};
+ \node[anchor=south,font=\small] at (4,0) {4};
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (4,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \filldraw [gray] (4,2) circle (2pt);
+ \filldraw [gray] (1,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ \filldraw [gray] (3,3) circle (2pt);
+ \filldraw [gray] (4,3) circle (2pt);
+ \filldraw [gray] (2,3) circle (2pt);
+ 
+ \draw[very thick] (1,1) -- (1,1) -- (1,3);
+ \draw[very thick] (2,1) -- (2,1) -- (2,3);
+ \draw[very thick] (3,1) -- (3,1) -- (3,3);
+ % \draw[very thick] (4,1) -- (4,1) -- (4,3);
+ \draw[very thick] (4,1) -- (4,2);
+ 
+ \draw[thick,dash dot,purple] (3,2) .. controls (3.5,2.5) .. (4,2);
+ \draw[thick,dash dot,purple] (2,2) .. controls (3,1.5) .. (4,2);
+ 
+ \foreach \i in {3}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (3,\i) .. controls (3.5,\i+.5) .. (4,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (3,\i-.5) .. (4,\i);
+          }
+          
+ \end{tikzpicture}}
+   }
+   \caption{Splitting of a vertex with addition of two edges and $n=3$, $r=4$.}
+ \label{fig:diagram3-1-3}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ \noindent
+  When $G$ is a triangle with $n=2$ and $r=3$, 
+  the above procedure can be reversed 
+  by first merging a vertex and then gluing edges, see Figure~\ref{fig:diagram3-23},
+  which results into ``overlapping'' all copies of the graph $G$. 
+   
+ \vspace{-0.4cm}
+ 
+ \begin{figure}[H]
+ \captionsetup[subfigure]{font=footnotesize}
+ \centering
+   \scalebox{0.75}{
+ \subcaptionbox{Merging one vertex.}[.3\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0.2,0.2) rectangle (3.8,4.3);
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ 
+ \draw[very thick] (1,1) -- (1,2);
+ \foreach \i in {1,2}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (1,\i) .. controls (2,\i-.5) .. (3,\i);
+          }
+ \filldraw [black] (1.1,3.8) circle (1.5pt);         
+ \filldraw [black] (1.1,2.8) circle (1.5pt);   
+ \filldraw [black] (1.97,3.3) circle (1.5pt); 
+ \filldraw [black] (2.84,3.8) circle (1.5pt);  
+ \filldraw [black] (2.84,2.8) circle (1.5pt);  
+ \draw[thick,blue] (1.1,3.8) -- (2.84,2.8);
+ \draw[thick,blue] (1.1,2.8) -- (1.1,3.8);
+ \draw[thick,blue] (1.1,2.8) -- (2.84,3.8);
+ \draw[thick,blue] (2.84,2.8) -- (2.84,3.8);
+          
+ \end{tikzpicture}}%
+   }
+   \hfill
+   \scalebox{0.75}{
+ \subcaptionbox{Gluing one edge.}[.3\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0.2,0.2) rectangle (3.8,4.3);
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ 
+ \draw[very thick] (1,1) -- (1,2);
+ \draw[very thick] (3,1) -- (3,2);
+ \foreach \i in {1,2}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+          }
+           \draw[thick,dash dot,purple] (1,2) .. controls (2,1.5) .. (3,2);
+ \filldraw [black] (2,3.8) circle (1.5pt);         
+ \filldraw [black] (2,2.8) circle (1.5pt);   
+ \filldraw [black] (1.13,3.3) circle (1.5pt);   
+ \filldraw [black] (2.87,3.3) circle (1.5pt);  
+  
+ \draw[thick,blue] (2,3.8) -- (2,2.8);
+ \draw[thick,blue] (2,3.8) -- (1.13,3.3);
+ \draw[thick,blue] (2,2.8) -- (1.13,3.3);
+ \draw[thick,blue] (2,3.8) -- (2.87,3.3);
+ \draw[thick,blue] (2,2.8) -- (2.87,3.3);
+                  
+ \end{tikzpicture}}
+   }
+   \hfill
+   \scalebox{0.75}{
+ \subcaptionbox{Gluing three edges.}[.3\textwidth]{%
+ \begin{tikzpicture}
+ \draw[black, thick] (0.2,0.2) rectangle (3.8,4.3);
+ 
+ \filldraw [gray] (1,1) circle (2pt);
+ \filldraw [gray] (2,1) circle (2pt);
+ \filldraw [gray] (3,1) circle (2pt);
+ \filldraw [gray] (1,2) circle (2pt);
+ \filldraw [gray] (2,2) circle (2pt);
+ \filldraw [gray] (3,2) circle (2pt);
+ \draw[very thick] (1,1) -- (1,2);
+ \draw[very thick] (2,1) -- (2,2);
+ \draw[very thick] (3,1) -- (3,2);
+ \foreach \i in {2}
+          {
+            \draw[thick,dash dot,purple] (1,\i) .. controls (1.5,\i+.5) .. (2,\i);
+            \draw[thick,dash dot,purple] (2,\i) .. controls (2.5,\i+.5) .. (3,\i);
+            \draw[thick,dash dot,purple] (1,\i) .. controls (2,\i-.5) .. (3,\i);
+          }
+ 
+ \filldraw [black] (2,3.8) circle (1.5pt);         
+ \filldraw [black] (1.5,2.93) circle (1.5pt);   
+ \filldraw [black] (2.5,2.93) circle (1.5pt);   
+ 
+ \draw[thick,blue] (2,3.8) -- (1.5,2.93);
+ \draw[thick,blue] (2,3.8) -- (2.5,2.93);
+ \draw[thick,blue] (2.5,2.93) -- (1.5,2.93);
+                   
+ \end{tikzpicture}}
+   }
+   \caption{Diagram patterns with $G$ a triangle and $n=2$, $r=3$.}
+ \label{fig:diagram3-23}
+ \end{figure}
+ 
+ \vspace{-1cm}
+ 
+ \noindent
+  As in part-$(b)$ above, we lower
+  bound $\kappa_n(N_G)$ using a single partition,
+  and we upper bound using the total count of
+  connected non-flat partition diagrams using Lemma~\ref{fjkldsf-l}-$b)$
+  to obtain \eqref{cumulant-rhoph1}.
+  
+ \noindent
+    $c)$ is a direct consequence of part~$b)$ above.
+ \end{proof}
+ 
+ \begin{corollary}[Sparse regime] 
+ \label{th6.4-c}
+   % Let $G$ be a tree graph with $r$ edges. 
+   Let $G$ be a connected graph with $|V(G)|=r$ vertices, $r\geq 2$,
+   satisfying Assumption~\ref{a61} for $n=2$ in the sparse regime \eqref{fjnldsf-2}. 
+   \begin{enumerate} % [a)] 
+   \item 
+     If $G$ is a tree, i.e. $|E(G)| = r-1$, we have the normalize
+     cumulant bounds % equivalence 
+  \begin{equation}
+    \label{jfkla} 
+    \big|\kappa_n(\widetilde{N}_G)\big|
+   \leq 
+    (K_3)^n 
+  n!^r
+       \lambda^{
+        - (
+ \alpha       -(\alpha - 1)r 
+        ) ( n/2-1 ) },
+    \qquad \lambda \geq 1,
+    \quad n \geq 2, 
+ \end{equation} 
+  where $K_3:=(K_2/K_1)^{r-1}$.
+ \item
+  If $G$ is not a tree, i.e. $|E(G)|\geq r$,
+  we have the normalized cumulant bounds % equivalence 
+  \begin{equation}
+    \label{fjklds34} 
+     \big|\kappa_n(\widetilde{N}_G)\big|
+   \leq 
+     n!^r
+   % r!^n
+     (K_3)^n
+         \lambda^{(\alpha |E(G)|-r)(n/2-1)}  , 
+    \qquad \lambda \geq 1,
+   \quad n \geq 2, 
+ \end{equation} 
+  for some $K_3 > 0$. 
+ \item
+   If $G$ is a cycle, i.e. $|E(G)| = r$,
+   we have the normalized cumulant bounds % equivalence 
+  \begin{equation}
+    \label{fjklds34-2} 
+     \big|\kappa_n(\widetilde{N}_G)\big|
+   \leq 
+   n!^r
+  %  r!^n
+   (K_3)^n
+     \lambda^{ (\alpha -1 )(n/2-1)r}, 
+      \qquad \lambda \geq 1,
+  \quad n \geq 2, 
+ \end{equation} 
+  for some $K_3>0$.
+   \end{enumerate}
+ \end{corollary}
+ \begin{proof}
+   We note that the upper bound in \eqref{equiv-1}
+   does not require Assumption~\ref{a61}. 
+   Regarding \eqref{jfkla}, we have  
+ \begin{eqnarray*} 
+   \big|\kappa_n(\widetilde{N}_G)\big|
+ & \leq &  
+   \frac{n!^r % r!^n
+     K_2^{(r-1)n}}{
+    (
+     (K_1)^{2(r-1)}
+         \lambda^{
+ \alpha      -(\alpha - 1)r 
+         }
+         )^{n/2}}
+   \lambda^{
+  \alpha          -(\alpha - 1)r 
+   }
+     \\
+     & = & 
+  \left(
+    \frac{K_2}{K_1}
+    \right)^{(r-1)n}
+    n!^r
+         \lambda^{-(
+  \alpha      -(\alpha - 1)r 
+        ) ( n/2-1)
+    }, \qquad n \geq 2.
+ \end{eqnarray*} 
+    \noindent
+  Regarding \eqref{fjklds34}, we have  
+ $$ 
+    \big|\kappa_n(\widetilde{N}_G)\big|
+  \leq 
+    \frac{
+   n!^r
+   % r!^n
+   (K_2)^{(r-1)n}
+   \lambda^{r-\alpha |E(G)|}
+    }{
+             (
+      (K_1)^r
+      \lambda^{r-\alpha |E(G)|}
+      )^{n/2}}
+ =
+    n!^r
+    \frac{
+   % r!^n
+      (K_2)^{(r-1)n}}{(K_1)^{nr/2}}
+       \lambda^{ - (r-\alpha |E(G)|)(n/2 - 1)}  , 
+   \quad n \geq 2. 
+ $$ 
+  Finally, the bound 
+  \eqref{fjklds34-2} is a direct consequence of \eqref{fjklds34}. 
+ \end{proof}
+ \vspace{-0.1cm}
+ \section{Asymptotic normality of subgraph counts}
+ \label{s6-1}
+ \vspace{-0.1cm}
+ \noindent
+ % and the references therein for more details.
+  In this section, we let $H(x,y)$ be a connection function  
+   satisfying Assumption~\ref{a61},
+   and consider the
+   random-connection model $G_{H_\lambda} (\Xi)$
+   where $H_\lambda(x,y):= c_\lambda H(x,y)$,
+   $\lambda >0$.
+ % in which the Berry-Esseen rate is obtained when $r=2$.
+ % We believe the rate can be improved significantly if a more tighter upper could found in the inequality \eqref{equiv-1}. 
+ \begin{corollary}[Dilute regime]
+   \label{c01}
+   Let $G$ be a connected graph with $|V(G)|=r$ vertices, $r\geq 2$,
+   In the dilute regime \eqref{fjnldsf},
+   the normalized subgraph count $\widetilde{N}_G$ in 
+   $G_{H_\lambda} (\Xi)$ satisfies
+   the Kolmogorov distance bound % with the % Berry-Esseen
+ \begin{equation}
+   \label{fjkld13}
+   \sup_{x\in \real}
+ \big| \P \big( \widetilde{N}_G \leq x \big) - \Phi(x) \big| \leq
+ C \lambda^{ - 1/(4r - 2)},
+ \end{equation}
+  with rate $1/(4r -2)$ as $\lambda$ tends to infinity, where $C>0$ depends only on $H$ and $G$.
+ \end{corollary}
+ \begin{proof}
+    In the dilute regime, the cumulant bound 
+ % \eqref{Statuleviciuscond},
+  \eqref{Statuleviciuscond} 
+ % \eqref{jfkla},
+ % \eqref{fjklds34}, 
+ % \eqref{fjklds34-2}
+  shows that
+  the centered and normalized subgraph count
+  $\widetilde{N}_G$ 
+  satisfies the {Statulevi\v{c}ius condition}
+  \eqref{Statuleviciuscond2} in appendix, see \cite{rudzkis,doering},
+  with $\gamma := r-1$. 
+  We conclude by applying Corollary~\ref{t1-c}
+  and Lemma~\ref{l1}-$i)$ with $\gamma :=r-1$
+  and $\Delta_\lambda:=\sqrt{K \lambda}$. 
+ \end{proof}
+ In the sparse regime we have the following result, 
+  in which \eqref{fjkldsa1} is consistent with
+  \eqref{fjkld13} when $\alpha = 1$.
+ \begin{corollary}[Sparse regime]
+   \label{c01-2}
+   Let $G$ be a tree $G$ with $|V(G)| = r \geq 2$ vertices. 
+   In the sparse regime \eqref{fjnldsf-2}
+   with $\alpha \in [1, r/(r-1) )$,
+   the normalized subgraph count $\widetilde{N}_G$ in 
+   $G_{H_\lambda} (\Xi)$ satisfies
+   the Kolmogorov distance bound % with the % Berry-Esseen
+ \begin{equation}
+ \label{fjkldsa1} 
+ \sup_{x\in \real}
+ \big| \P \big( \widetilde{N}_G \leq x \big) - \Phi(x) \big| \leq
+ C \lambda^{ - (
+  \alpha   -(\alpha - 1)r 
+     ) / ( 4r - 2) }, 
+ \end{equation} 
+  as $\lambda$ tends to infinity, where $C>0$ depends only on $H$ and $G$.
+ \end{corollary}
+ \begin{proof}
+   This is a consequence of 
+   Corollary~\ref{th6.4-c}-$a)$
+   and Lemma~\ref{l1}-$i)$ in appendix,
+   with $\gamma :=r-1$ and 
+   $\Delta_\lambda:=
+   (K \lambda )^{ - (
+  \alpha   -(\alpha - 1)r 
+     )/2}$
+   and $\alpha \in [1, r/(r-1) )$. 
+ \end{proof} 
+   We note that  up to division by $2r - 1$,
+    the rate in \eqref{fjkldsa1} is consistent  
+  with the rate $(
+  \alpha    -(\alpha - 1)r 
+      ) / 2$ obtained for the counting of trees in the
+  Erd{\H o}s-R\'enyi graph, cf. Corollary~4.10 of \cite{PS2}. 
+  In addition, since 
+ $
+ (\alpha |E(G)|-r)(n/2-1)
+ \geq
+ (\alpha -1)(n/2-1)r \geq 0$,
+ no significant Kolmogorov bounds
+ are derived from \eqref{fjklds34}
+ and \eqref{fjklds34-2} 
+ for cycle and other non-tree graphs 
+ in the sparse regime,
+ which is consistent with
+ Corollaries~4.8-4.9 of \cite{PS2}. 
+ 
+ \subsubsection*{Moderate deviation and concentration inequalities} 
+ \noindent 
+ In the dilute regime of Corollary~\ref{c01}
+ with $\Delta_\lambda = \sqrt{K \lambda}$
+  in Examples~\ref{examplea}-\ref{exampleb} above, 
+ by Lemma~\ref{l1}-$ii)$ in appendix, see Theorem~1.1 of \cite{doring}, 
+     $\widetilde{N}_G$
+     satisfies a moderate deviation principle
+     with speed $a_\lambda^2 = o( \lambda^{1/(2r - 1)} )$ and rate function $x^2/2$.
+     In addition,
+ by Lemma~\ref{l1}-$iii)$ in appendix,
+ see the corollary of \cite[Lemma~2.4]{saulis},
+ for any $x\ge0$ and sufficiently large $\lambda$,
+ for some constant $K>0$ 
+ we have the concentration inequality 
+ \begin{equation}
+ \label{concentrationineq}
+   \P \big( \big| \widetilde{N}_G \big|
+   \geq x)\le2\exp\left(-
+   \frac{1}{4} 
+    ( K \lambda)^{1/r}
+    \right), 
+ \end{equation} 
+ in agreement with the rate in Theorem~1.1 of \cite{bachmann},
+ which is stated for subgraph counts in random geometric
+ graphs. 
+ \vspace{-0.1cm}
+ \section{Subgraph counts in random geometric graphs}
+ \label{rgg}
+ \vspace{-0.1cm}
+ \noindent
+ In this section, we consider subgraph counts in
+ the (Poisson) random geometric graph model.
+ Assume that $\mu$ is the Lebesgue measure,
+ and that the intensity measure $\Lambda$ takes the form 
+ $$\Lambda (\mathrm{d}x) := {\bf 1}_A (x) \mu(\mathrm{d}x),\qquad\lambda>0,$$
+   where $A$ is a Borel subset of $\real^d$
+   such that $\mu (A)<\infty$. 
+ 
+ \vspace{-0.2cm}
+ 
+ \begin{definition}
+   For every $\lambda >0$,
+   let $G_{H_\lambda} (\Xi)$
+   denote the random-connection model
+   with connection function 
+   $$
+   H_\lambda (x,y):=\bone_{\{\|x-y\|\leq R_\lambda\}},
+   \qquad x,y\in\R^d,
+   $$
+   for some function $R_\lambda>0$ of $\lambda$.
+  We consider the following regimes. 
+ \begin{itemize}
+ % \item Full random graph regime: $c_\lambda = 1 $, $\lambda > 0$. 
+ \item Dense regime: we have 
+ $$ 
+     \lim_{\lambda\to \infty} \lambda R_\lambda^d \in (0,\infty]. 
+ $$
+ \item Sparse regime: we have 
+ $$ 
+  \lim_{\lambda\to \infty} \lambda R_\lambda^d = 0
+ \ \mathrm{and} \
+ \lim_{\lambda\to \infty}
+ \lambda(\lambda R_\lambda^d)^{r-1} = \infty.
+ $$
+ \end{itemize} 
+ \end{definition}
+ 
+ \vspace{-0.4cm}
+ 
+ \noindent
+ When $\lim_{\lambda\to \infty} \lambda R_\lambda^d = c \in (0,\infty )$, 
+ we also say that we are in the thermodynamic regime.
+ 
+  \vspace{-0.2cm}
+ 
+ \begin{prop}
+     \label{thm8}
+  Let $G$ be a connected graph with $|V(G)|=r$ vertices, $r\geq 2$.
+  In the random geometric graph model we have the following cumulant bounds. 
+  \begin{enumerate} % [a)]
+  \item (Dense regime). 
+    We have
+    \begin{equation}
+      \label{b1}
+      K_1 (n-1)! \lambda^{1+(r-1)n} ( R_\lambda^d)^{(r-1)n}
+      \leq \kappa_n(N_G) \leq K_2 n!^r r!^{n-1}
+  \lambda^{1+(r-1)n} ( R_\lambda^d)^{(r-1)n}, 
+ \end{equation}
+ % and \begin{equation} \kappa_2(N_G)\geq c_d\lambda_n, \end{equation}
+ for some constants $K_1, K_2 > 0$ independent
+ of $\lambda >0$, $n\geq 1$. 
+   \item (Thermodynamic regime). 
+    We have
+    \begin{equation}
+ \label{b2}
+      K_1 \lambda \leq \kappa_n(N_G)\leq K_2 n!^r r!^{n-1}\lambda,
+ \end{equation}
+  % and \begin{equation} \kappa_2(N_G)\geq c_d\lambda_n, \end{equation}
+ for some constants $K_1, K_2 > 0$ independent
+ of $\lambda >0$, $n\geq 1$. 
+   \item (Sparse regime). 
+    We have
+    \begin{equation}
+  \label{b3}
+          K_1 \lambda^r ( R_\lambda^d)^{r-1} 
+      \leq \kappa_n(N_G)\leq K_2 n!^r r!^{n-1} \lambda^r (R_\lambda^d)^{r-1},
+ \end{equation}
+  % and \begin{equation} \kappa_2(N_G)\geq c_d\lambda_n, \end{equation}
+ for some constants $K_1, K_2 > 0$ independent
+ of $\lambda >0$, $n\geq 1$. 
+  \end{enumerate}
+ \end{prop}
+ \begin{proof}
+  By Proposition~\ref{lma-diagram1},
+  letting $\widebar{\rho}$ denote a spanning tree contained in $\rho$,
+   we have 
+ \begin{eqnarray}
+   \nonumber
+   \kappa_n(N_G)&=&\sum_{\rho \in \Pi_{\widehat{1}} ( [n] \times [r])
+     \atop
+     {\rho \wedge \pi = \widehat{0}}
+   }
+   \lambda^{|\rho|}\int_{A^{|\rho |}}
+   \left(
+ \prod_{(i,j) \in E(\rho_G)}
+ \bone_{\{\|x_i-x_j\|\leq R_\lambda\}}
+ \right)
+ \mathrm{d}x_1\cdots\mathrm{d}x_{|\rho|}
+ \\
+ \nonumber
+ &\leq &\sum_{\rho \in \Pi_{\widehat{1}} ( [n] \times [r])
+     \atop
+     {\rho \wedge \pi = \widehat{0}}
+   }
+   \lambda^{|\rho|}\int_{A^{|\rho |}}
+   \left(
+ \prod_{(i,j) \in E(\widebar{\rho}_G)}
+ \bone_{\{\|x_i-x_j\|\leq R_\lambda\}}
+ \right)
+ \mathrm{d}x_1\cdots\mathrm{d}x_{|\rho|}
+ \\
+ \nonumber
+ &=&\sum_{\rho \in \Pi_{\widehat{1}} ( [n] \times [r])
+     \atop
+     {\rho \wedge \pi = \widehat{0}}
+   }
+   \lambda^{|\rho|} \mu (A) (v_d R_\lambda^d)^{|\rho|-1}. 
+ \end{eqnarray}
+  
+   \noindent
+ $a)$ 
+   In the dense regime
+   with $\lim_{\lambda\to \infty} \lambda R_\lambda^d = \infty$,
+   the dominating asymptotic order 
+   $\lambda(\lambda R_\lambda^d)^{(r-1)n}$ of $\kappa_n(N_G)$ is
+   achieved when $|\rho|=1+(r-1)n$,
+   which yields the upper bound in \eqref{b1}. 
+ 
+ \noindent
+ $b)$ 
+     In the thermodynamic regime
+     with $\lim_{\lambda\to \infty} \lambda R_\lambda^d = c>0$,
+     the dominating asymptotic order of $\kappa_n(N_G)$ is $\lambda$,
+     which yields the upper bound in \eqref{b2}. 
+ 
+   \noindent
+ $c)$ 
+     In the sparse regime
+     with $\lim_{\lambda\to \infty} \lambda R_\lambda^d = 0$ and
+     $\lim_{\lambda\to \infty} \lambda(\lambda R_\lambda^d)^{r-1} = \infty$,
+     the dominating asymptotic order $\lambda(\lambda R_\lambda^d)^{r-1}$
+     of $\kappa_n(N_G)$ is achieved when $|\rho|=r$, 
+     which yields the upper bound in \eqref{b3}. 
+ 
+ % \medskip 
+ 
+  In addition, the kernel 
+  $H_\lambda (x,y)=\bone_{\{\|x-y\|\leq R_\lambda\}}$
+  satisfies Assumption~\ref{a61} for all $n\geq 1$,
+  with $C_{\mu , H_\lambda} = v_d (R_\lambda /2)^d$
+  in the framework of Example~\ref{examplea},
+  which similarly yields the lower bounds in 
+  \eqref{b1}-\eqref{b3}.
+ \end{proof}
+  The next result is a direct consequence of Proposition~\ref{thm8}. 
+ \begin{corollary}
+     \label{thm8-0}
+  Let $G$ be a connected graph with $|V(G)|=r$ vertices, $r\geq 2$.
+  In the random geometric graph model we have the following
+  normalized cumulant bounds.  
+  \begin{enumerate} % [a)]
+  \item (Dense and thermodynamic regime). 
+    We have
+    \begin{equation}
+      \kappa_n\big(\widetilde{N}_G\big) \leq n!^r ( K \lambda )^{-(n/2-1)}, 
+ \end{equation}
+ % and \begin{equation} \kappa_2(N_G)\geq c_d\lambda_n, \end{equation}
+ for some $K>0$ a constant independent
+ of $\lambda >0$, $n\geq 1$. 
+   \item (Sparse regime). 
+    We have
+    \begin{equation}
+      \kappa_n\big(\widetilde{N}_G\big)\leq K \big(
+       \lambda^r R_\lambda^{(r-1)d} \big)^{-(n/2-1)},
+ \end{equation}
+  % and \begin{equation} \kappa_2(N_G)\geq c_d\lambda_n, \end{equation}
+ for some constants $K_1, K_2 > 0$ independent of $\lambda >0$, $n\geq 1$. 
+  \end{enumerate}
+ \end{corollary}
+  The following result then follows from Corollary~\ref{thm8-0}. 
+ \begin{corollary}
+   \label{jdkj10}
+   Let $G$ be a connected graph with $|V(G)|=r$ vertices, $r\geq 2$,
+   in the random geometric graph model.
+   \begin{enumerate} % [i)]
+     \item 
+     Dense \!\! \slash \ thermodynamic regimes. 
+   If $\lim_{\lambda\to\infty} (\lambda R_\lambda^d) \in (0,\infty]$, 
+  we have
+ \begin{equation}
+ \nonumber
+   \sup_{x\in \real}
+ \big| \P \big( \widetilde{N}_G \leq x \big) - \Phi(x) \big| \leq
+ C
+ \lambda^{-1/ ( 4r - 2) }.
+ \end{equation}
+ \item
+   Sparse regime.
+   If $\lim_{\lambda\to\infty} \lambda R_\lambda^d = 0$ and
+   $\lim_{\lambda\to\infty} \lambda(\lambda R_\lambda^d)^{r-1} = \infty$,
+   we have 
+ \begin{equation}
+ \sup_{x\in \real}
+ \big| \P \big( \widetilde{N}_G \leq x \big) - \Phi(x) \big| \leq
+ C
+ \big(\lambda^r R_\lambda^{(r-1)d}\big)^{-1/ ( 4r - 2) }.
+ \end{equation}
+ \end{enumerate}
+ \end{corollary}
+ \begin{proof}
+   In both cases $(i)$ and $(ii)$ we apply Corollary~\ref{thm8-0} 
+   and Lemma~\ref{l1}-$i)$ with $\gamma :=r-1$,
+   by taking 
+   $\Delta_\lambda:=
+   \sqrt{\lambda}$
+   in the dense and  thermodynamic regimes,
+   and 
+   $\Delta_\lambda:= \lambda^{r/2} R_\lambda^{(r-1)d/2}$
+   in the sparse regime.
+ \end{proof} 
+ We note that Berry-Esseen convergence rates have been obtained
+ for certain random functionals in the random geometric graph
+ model, including total edge lengths in \cite[Corollary~4.3]{schulte},
+ clique counts using Poisson U-statistics in \cite[Theorem~4.1]{reitzner}  
+ and using stabilizing functionals in \cite[Theorem~3.15]{lachiezerey4},
+ and $k$-hop counts in the one-dimensional unit disk model in
+ \cite[Proposition~8.1]{privaultkhops}. 
+ % \textcolor{purple}{ Rates of normal convergence with respect to the Kolmogorov distance have been obtained for subgraph counts on random geometric graphs in \cite{schulte} using Poisson U-statistics, see also \cite{lachiezerey4} using stabilizing functionals. } 
+ 
+  % \begin{remark}The monograph \cite{penrose} contains very comprehensive studies around the random geometric graph. Some non-quantitative central limit theorems are obtained for subgraph and component counts in \cite[Chapter~3]{penrose}. Rates of normal convergence with respect to the Kolmogorov distance were deduced for subgraph counts of the random geometric graph in \cite{schulte} as a Poisson U-statistics, and also in \cite{lachiezerey4} as a stabilizing functional. \end{remark}
+ 
+ % \begin{remark}\label{rem-1} For subgraph counts in general RCM, a CLT were yielded in \cite{can2022} under a weakly stabilizing condition, c.f. \cite{penrose01}, plus some moment conditions. As mentioned in \cite[Remark~2.5]{can2022}, the stabilizing condition appeared in \cite{penrose05,lachiezerey4} does not apply for subgraph counts with general random connection function. \end{remark}
+ 
+ \subsubsection*{Moderate deviation and concentration inequalities} 
+ \noindent 
+ Letting $\gamma =r-1$, 
+ In the dense and thermodynamic regimes of 
+ Corollary~\ref{jdkj10} with $\Delta_\lambda=
+ \sqrt{\lambda}$, $\widetilde{N}_G/a_\lambda$
+     satisfies a moderate deviation principle
+ with rate function $x^2/2$
+ and speed $a_\lambda^2 = o( \lambda^{1/(2r - 1)} )$
+ in the setting of Lemma~\ref{l1}-$ii)$ in appendix,
+ and the concentration inequality 
+ \eqref{concentrationineq} holds by Lemma~\ref{l1}-$iii)$. 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Example with single Appendix:            %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{appendix}
+\section*{}\label{appn} %% if no title is needed, leave empty \section*{}.
+\noindent 
+The following results are summarized from the ``main lemmas'' in Chapter~2 of \cite{saulis} and \cite{doring}, and are tailored to our RCM applications.
+% We should mention that the assumption \eqref{Statuleviciuscond2} is now known as the {Statulevi\v{c}ius condition}. 
+\begin{lemma}
+  \label{l1}
+  Let $(X_\lambda)_{\lambda \geq 1}$ be a family of random variables with mean zero and unit variance for all $\lambda>0$. Suppose that for all $\lambda \geq 1$, all moments of the random variable $X_\lambda$ exist and that % and sufficiently large $\lambda$,
+  the cumulants of $X_\lambda$ satisfy  
+  \begin{equation}
+    \label{Statuleviciuscond2}
+    |\kappa_n (X_\lambda)|\le\frac{(n!)^{1+\gamma}}{(\Delta_\lambda)^{n-2}},
+    \qquad
+ n\ge3, 
+\end{equation}
+  where $\gamma\ge0$ is a constant not depending on $\lambda$, while $\Delta_\lambda\in(0,\infty)$ may depend on $\lambda$.
+   Then, the following assertions hold.
+\begin{enumerate} % [i)]
+\item (Kolmogorov bound,
+ \cite[Corollary~2.1]{saulis} and \cite[Theorem~2.4]{doering})
+  One has
+\begin{equation}
+\sup_{x\in\R}|\IP(X_\lambda\leq x)-\Phi(x)|\leq \frac{C}{(\Delta_\lambda)^{1/(1+2\gamma)}},
+\end{equation}
+for some constant $C>0$ depending only on $\gamma$.
+\item (Moderate deviation principle,
+  see \cite[Theorem~1.1]{doring}).
+  Let $( a_\lambda )_{\lambda > 0}$ be a sequence of real numbers tending to infinity, and such that 
+  $$
+  \lim_{\lambda \to \infty}
+  \frac{a_\lambda}{(\Delta_\lambda)^{1/(1+2\gamma)}}
+  = 0.
+  $$
+  % as $\lambda\to\infty$.
+  Then, $ (a_\lambda^{-1}X_\lambda)_{\lambda >0}$ satisfies a moderate deviation principle with speed $a_\lambda^2$ and rate function $x^2/2$. 
+\item (Concentration inequality,
+  corollary of \cite[Lemma~2.4]{saulis}).
+  For any $x\ge0$ and sufficiently large $\lambda$, 
+\begin{equation}
+\IP(|X_\lambda|\geq x)\le2\exp\left(-\frac14\min\left( \frac{x^2}{2^{1/(1+\gamma)}},(x\Delta_\lambda)^{1/(1+\gamma)}\right) \right).
+\end{equation} 
+\item (Normal approximation with Cram\'er corrections,
+  \cite[Lemma~2.3]{saulis}). 
+ There exists a
+  constant $c>0$ such that for all $\lambda \geq 1$ and $x\in(0,c(\Delta_\lambda)^{1/(1+2\gamma)})$ we have 
+\begin{eqnarray*}
+  \frac{\IP(X_\lambda\geq x)}{1-\Phi(x)}&=&
+  \left(1+O\left(\frac{x+1}{(\Delta_\lambda)^{1/(1+2\gamma)}}\right)\right)
+  \exp \big( \tilde{L}(x) \big),
+  \\
+  \frac{\IP(X_\lambda\leq -x)}{\Phi(-x)}&=&
+  \left(1+O\left(\frac{x+1}{(\Delta_\lambda)^{1/(1+2\gamma)}}\right)\right)
+  \exp \big( \tilde{L}(-x) \big),
+\end{eqnarray*}
+where $\tilde{L}(x)$ is related to the Cram\'er-Petrov series. 
+\end{enumerate}
+\end{lemma}
+\end{appendix}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% Example with multiple Appendixes:        %%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{appendix}
+% \section{Title of the first appendix}\label{appA}
+% If there are more than one appendix, then please refer to it
+% as \ldots\ in Appendix \ref{appA}, Appendix \ref{appB}, etc.
+
+% \section{Title of the second appendix}\label{appB}
+% \subsection{First subsection of Appendix \protect\ref{appB}}
+
+% Use the standard \LaTeX\ commands for headings in \verb|{appendix}|.
+% Headings and other objects will be numbered automatically.
+% \begin{equation}
+% \mathcal{P}=(j_{k,1},j_{k,2},\dots,j_{k,m(k)}). \label{path}
+% \end{equation}
+
+% Sample of cross-reference to the formula (\ref{path}) in Appendix \ref{appB}.
+% \end{appendix}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Support information, if any,             %%
+%% should be provided in the                %%
+%% Acknowledgements section.                %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{acks}[Acknowledgments]
+  We thank M. Schulte and C. Th\"ale for a correction to an earlier
+  version of Lemma~\ref{fjkldsf-l}.
+\end{acks}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Funding information, if any,             %%
+%% should be provided in the                %%
+%% funding section.                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{funding}
+The first author was supported by NSF Grant DMS-??-??????.
+
+The second author was supported in part by NIH Grant ???????????.
+\end{funding}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Supplementary Material, including data   %%
+%% sets and code, should be provided in     %%
+%% {supplement} environment with title      %%
+%% and short description. It cannot be      %%
+%% available exclusively as external link.  %%
+%% All Supplementary Material must be       %%
+%% available to the reader on Project       %%
+%% Euclid with the published article.       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{supplement}
+% \stitle{Title of Supplement A}
+% \sdescription{Short description of Supplement A.}
+% \end{supplement}
+% \begin{supplement}
+% \stitle{Title of Supplement B}
+% \sdescription{Short description of Supplement B.}
+% \end{supplement}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  The Bibliography                       %%
+%%                                                         %%
+%%  imsart-???.bst  will be used to                        %%
+%%  create a .BBL file for submission.                     %%
+%%                                                         %%
+%%  Note that the displayed Bibliography will not          %%
+%%  necessarily be rendered by Latex exactly as specified  %%
+%%  in the online Instructions for Authors.                %%
+%%                                                         %%
+%%  MR numbers will be added by VTeX.                      %%
+%%                                                         %%
+%%  Use \cite{...} to cite references in text.             %%
+%%                                                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% if your bibliography is in bibtex format, uncomment commands:
+%\bibliographystyle{imsart-nameyear} % Style BST file (imsart-number.bst or imsart-nameyear.bst)
+%\bibliography{bibliography}       % Bibliography file (usually '*.bib')
+
+%% or include bibliography directly:
+\begin{thebibliography}{4}
+  \bibitem[\protect\citeauthoryear{Barbour, Karo{\'n}ski and Ruci{\'n}ski}{1989}]{BKR}
+  Barbour,~A. D., Karo{\'n}ski,~M. and Ruci{\'n}ski,~A.~(1989).
+  A central limit theorem for decomposable random variables with
+    applications to random graphs. \textit{J. Combin. Theory Ser. B}~\textbf{47} 125--145.
+  
+  \bibitem[\protect\citeauthoryear{Bender, Odlyzko and Richmond}{1985}]{eabender}
+  Bender,~E. A., Odlyzko,~A. M. and Richmond,~L. B.~(1985). The asymptotic number of irreducible partitions. \textit{European J. Combin.}~\textbf{6} 1--6.
+
+
+  \bibitem[\protect\citeauthoryear {Balakrishnan and Ranganathan}{2012}]{balakrishnan}
+  Balakrishnan,~R. and Ranganathan,~K.~(2012).
+  \textit{A Textbook of Graph Theory}.
+  Universitext. Springer, New York.
+
+  \bibitem[\protect\citeauthoryear {Bachmann and Reitzner}{2018}]{bachmann}
+  Bachmann,~S. and Reitzner,~M.~(2018). 
+  Concentration for Poisson $U$-statistics: Subgraph counts in random geometric graphs.
+  \textit{Stochastic Process. Appl.}~\textbf{128} 3327--3352.
+
+  \bibitem[\protect\citeauthoryear {Bogdan, Rosi\'{n}ski, Serafin and Wojciechowski}{2017}]{bogdan}
+  Bogdan,~K., Rosi\'{n}ski,~J., Serafin,~G. and Wojciechowski,~L.~(2017).
+  L\'{e}vy systems and moment formulas for mixed Poisson integrals.
+  In \textit{Stochastic analysis and related topics}~\textbf{72} of \textit{Progr. Probab.}, 139--164. Birkh{\"{a}}user/Springer, Cham.
+
+  \bibitem[\protect\citeauthoryear {Can and Trinh}{2022}]{can2022}
+  Can,~V. H. and Trinh,~K. D.~(2022).
+  Random connection models in the thermodynamic regime: central limit theorems for add-one cost stabilizing functionals.
+  \textit{Electron. J. Probab.}~\textbf{27} 1--40.
+
+  \bibitem[\protect\citeauthoryear {D{\"{o}}ring and Eichelsbacher}{2013}]{doring}
+  D{\"{o}}ring,~H. and Eichelsbacher,~P.~(2013).
+  Moderate deviations via cumulants.
+  \textit{J. Theoret. Probab.}~\textbf{26} 360--385.
+
+  \bibitem[\protect\citeauthoryear {D{\"o}ring, Jansen and Schubert}{2022}]{doering}
+  D{\"o}ring,~H., Jansen,~S. and Schubert,~K.
+  The method of cumulants for the normal approximation.
+  \textit{Probab. Surv.}~\textbf{19} 185--270.
+
+  \bibitem[\protect\citeauthoryear {Eichelsbacher and Redno{\ss}}{2023}]{rednos}
+  Eichelsbacher,~P. and Redno{\ss},~B.~(2023).
+  Kolmogorov bounds for decomposable random variables and subgraph counting by the Stein-Tikhomirov method. \textit{Bernoulli}~\textbf{29} 1821--1848. 
+
+  \bibitem[\protect\citeauthoryear{Eichelsbacher and Th{\"a}le}{2014}]{eichelsbacher}
+  Eichelsbacher,~P. and Th{\"a}le,~C.~(2014).
+  New Berry-Esseen bounds for non-linear functionals of Poisson random measures.
+  \textit{Electron. J. Probab.}~\textbf{19} 1--25.
+
+  \bibitem[\protect\citeauthoryear {Erd{\Horig{o}}s and R\'enyi}{1959}]{ER}
+Erd{\Horig{o}}s,~P. and R\'enyi,~A.~(1959).
+  On random graphs, {I}.
+  \textit{Publ. Math. Debrecen}~\textbf{6} 290--297.
+
+  \bibitem[\protect\citeauthoryear{Gilbert}{1959}]{G} Gilbert,~E.N.~(1959).
+  Random graphs.
+  \textit{Ann. Math. Statist}~\textbf{30} 1141--1144.
+
+  \bibitem[\protect\citeauthoryear {Grote and Th{\"a}le}{2018}]{grotethale18}
+  Grote,~J. and Th{\"a}le,~C.~(2018).
+  Concentration and moderate deviations for Poisson polytopes and polyhedra.
+  \textit{Bernoulli}~\textbf{24} 2811--2841.
+
+  \bibitem[\protect\citeauthoryear {Grote and Th{\"a}le}{2018}]{thale18}
+  Grote,~J. and Th{\"a}le,~C.~(2018).
+  Gaussian polytopes: a cumulant-based approach.
+  \textit{J. Complexity}~\textbf{47} 1--41.
+
+  \bibitem[\protect\citeauthoryear {Janson}{1988}]{Janson1988}
+  Janson,~S.~(1988).
+  Normal convergence by higher semiinvariants with applications to sums of dependent random variables and random graphs.
+  \textit{Ann. Probab.}~\textbf{16} 305--312.
+
+  \bibitem[\protect\citeauthoryear {Jansen}{2019}]{jansen}
+  Jansen,~S.~(2019).
+  Cluster expansions for Gibbs point processes.
+  \textit{Adv. in Appl. Probab.}~\textbf{51} 1129--1178.
+
+  \bibitem[\protect\citeauthoryear {Khorunzhiy}{2008}]{khorunzhiy}
+  Khorunzhiy,~O.~(2008).
+  On connected diagrams and cumulants of {E}rd{\Horig{o}}s-{R}\'enyi matrix models.
+  \textit{Comm. Math. Phys.}~\textbf{282} 209--238.
+
+  \bibitem[\protect\citeauthoryear {Krokowski, Reichenbachs and Th{\"a}le}{2017}]{reichenbachsAoP}
+  Krokowski,~K., Reichenbachs,~A. and Th{\"a}le,~C.~(2017).
+  Discrete Malliavin-Stein method: Berry-Esseen bounds for
+    random graphs and percolation.
+  \textit{Ann. Probab.}~\textbf{45} 1071--1109.
+
+  \bibitem[\protect\citeauthoryear {Lachi\`eze-Rey and Reitzner}{2016}]{lachieze-rey}
+  Lachi\`eze-Rey,~R. and Reitzner,~M.~(2016).
+  $U$-statistics in stochastic geometry.
+  {\em Stochastic Analysis for {P}oisson Point Processes: {M}alliavin Calculus, {W}iener-{I}t{\^o} Chaos Expansions and Stochastic Geometry.} Cham: Springer International Publishing, 229--253.
+
+  \bibitem[\protect\citeauthoryear {Lachi\`eze-Rey, Schulte and Yukich}{2019}]{lachiezerey4}
+  Lachi\`eze-Rey,~R., Schulte,~M. and Yukich,~J.E.~(2019).
+  Normal approximation for stabilizing functionals.
+  \textit{Ann. Appl. Probab.}~\textbf{29} 931--993.
+
+  \bibitem[\protect\citeauthoryear {Last, Nestmann and Schulte}{2021}]{LNS21}
+  Last,~G., Nestmann,~F. and Schulte,~M.~(2021).
+  The random connection model and functions of edge-marked {P}oisson processes: second order properties and normal approximation.
+  \textit{Ann. Appl. Probab.}~\textbf{31} 128--168.
+
+  \bibitem[\protect\citeauthoryear {Last, Peccati and Schulte}{2016}]{lastpeccatipenrose}
+  Last,~G., Peccati,~G. and Schulte,~M.~(2016).
+  Normal approximation on Poisson spaces: Mehler's formula, second order Poincar\'e inequality and stabilization.
+  \textit{Probab. Theory Related Fields}~\textbf{165} 667--723.
+
+  \bibitem[\protect\citeauthoryear {Last and Penrose}{2017}]{LastPenrose17}
+  Last,~G. and Penrose,~M.D.~(2017).
+  \textit{Lectures on the Poisson process}~(Vol. 7).
+  Cambridge University Press.
+
+  \bibitem[\protect\citeauthoryear {Malyshev and Minlos}{1991}]{MalyshevMinlos91}
+  Malyshev,~V.A. and Minlos,~R.A.~(1991).
+  \textit{Gibbs random fields}, Vol.44, {\em Mathematics and its Applications (Soviet Series)}.
+  \newblock Kluwer Academic Publishers Group, Dordrecht.
+
+  \bibitem[\protect\citeauthoryear {Peccati and Taqqu}{2011}]{peccatitaqqu}
+  Peccati,~G. and Taqqu,~M.~(2011).
+  \textit{Wiener Chaos: Moments, Cumulants and Diagrams: A survey with Computer Implementation}.
+  \newblock Bocconi \& Springer Series. Springer.
+
+  \bibitem[\protect\citeauthoryear {Penrose}{2003}]{penrosebk}
+  Penrose,~M.~(2003).
+  \textit{Random geometric graphs}, Vol.5 {\em Oxford Studies in Probability}.
+  \newblock Oxford University Press.
+
+  
+
+
+  \bibitem[\protect\citeauthoryear {Penrose and Yukich}{2001}]{penrose01}
+  Penrose,~M. and Yukich,~J.E.~(2001).
+  Central limit theorems for some graphs in computational geometry.
+  \textit{Ann. Appl. Probab.}~\textbf{11} 1005--1041.
+
+  \bibitem[\protect\citeauthoryear {Penrose and Yukich}{2005}]{penrose05}
+  Penrose,~M. and Yukich,~J.E.~(2005).
+  Normal approximation in geometric probability.
+  {\em Stein's method and applications}, Vol.5 {\em Lect.
+    Notes Ser. Inst. Math. Sci. Natl. Univ. Singap.}, 37--58. Singapore Univ. Press.
+
+    \bibitem[\protect\citeauthoryear{Privault}{2012}]{momentpoi}
+  Privault,~N.~(2012).
+  Moments of {P}oisson stochastic integrals with random integrands.
+  \textit{Probab. Math. Statist.}~\textbf{32} 227--239.
+
+  \bibitem[\protect\citeauthoryear {Privault}{2019}]{prkhp}
+  Privault,~N.~(2019).
+  Moments of $k$-hop counts in the random-connection model.
+  \textit{J. Appl. Probab.}~\textbf{56} 1106--1121.
+
+  \bibitem[\protect\citeauthoryear{Privault}{2022}]{privaultkhops}
+  Privault,~N.~(2022).
+  Asymptotic analysis of $k$-hop connectivity in the 1{D} unit disk random graph model.
+  Preprint arXiv:2203.14535.
+
+  \bibitem[\protect\citeauthoryear {Privault and Serafin}{2020}]{PS2}
+  Privault,~N. and Serafin,~G.~(2020).
+  Normal approximation for sums of discrete $U$-statistics -
+  application to {K}olmogorov bounds in random subgraph counting.
+  \textit{Bernoulli}~\textbf{26} 587--615.
+
+  \bibitem[\protect\citeauthoryear {Privault and Serafin}{2022}]{PS4}
+  Privault,~N. and Serafin,~G.~(2022).
+  Berry-{E}sseen bounds for functionals of independent random variables.
+  \textit{Electron. J. Probab.}~\textbf{27} 1--37.
+
+  \bibitem[\protect\citeauthoryear {Reitzner and Schulte}{2013}]{reitzner}
+  Reitzner,~M. and Schulte,~M.~(2013).
+  Central limit theorems for ${U}$-statistics of {P}oisson point processes.
+  \textit{Ann. Probab.}~\textbf{41} 3879--3909.
+
+  \bibitem[\protect\citeauthoryear {R{\"o}llin}{2022}]{roellin2}
+  R{\"o}llin,~A.~(2022).
+  Kolmogorov bounds for the normal approximation of the number of triangles in the {E}rd{\Horig{o}}s-{R}\'enyi random graph.
+  \textit{Probab. Engrg. Inform. Sci.}~\textbf{36} 747--773.
+
+  \bibitem[\protect\citeauthoryear {Rota}{1964}]{rota1964}
+  Rota,G.-C.~(1964).
+  On the foundations of combinatorial theory. {I}. Theory of {M}\"obius functions.
+  {\em Z. Wahrscheinlichkeitstheorie und Verw. Gebiete}~\textbf{2} 340--368.
+
+  \bibitem[\protect\citeauthoryear {Rudzkis, Saulis and Statulevi\v{c}ius}{1978}]{rudzkis}
+  Rudzkis,~R., Saulis,~L. and Statulevi\v{c}ius,~V.A.~(1978).
+  A general lemma on probabilities of large deviations.
+  \textit{Litovsk. Mat. Sb.}~\textbf{18} 99--116.
+
+  \bibitem[\protect\citeauthoryear {Ruci{\'n}ski}{1988}]{rucinski}
+  Ruci{\'n}ski,~A.~(1988).
+  When are small subgraphs of a random graph normally distributed?
+  \textit{Probab. Theory Related Fields}~\textbf{78} 1--10.
+
+  \bibitem[\protect\citeauthoryear {Saulis and Statulevi\v{c}ius}{1991}]{saulis}
+  Saulis,~L. and Statulevi\v{c}ius,~V.A.~(1991).
+  \textit{Limit theorems for large deviations}, Vol.73, {\em
+    Mathematics and its Applications (Soviet Series)}.
+  \newblock Kluwer Academic Publishers Group, Dordrecht.
+
+  \bibitem[\protect\citeauthoryear {Schulte}{2016}]{schulte}
+  Schulte,~M.~(2016).
+  Normal approximation of {P}oisson functionals in {K}olmogorov distance.
+  \textit{J. Theoret. Probab.}~\textbf{29} 96--117.
+
+  \bibitem[\protect\citeauthoryear {Schulte and Th{\"a}le}{2023}]{schulte-thaele}
+  Schulte,~M. and Th{\"a}le,~C.~(2023).
+  Moderate deviations on {P}oisson chaos.
+  arXiv:2304:00876v1.
+
+  \bibitem[\protect\citeauthoryear {Zhang}{2022}]{zhangzs}
+  Zhang,~Z.S.~(2022).
+  Berry-{E}sseen bounds for generalized {$U$}-statistics.
+  \textit{Electron. J. Probab.}~\textbf{27} 1--36.
+
+
+\end{thebibliography}
+
+\end{document}

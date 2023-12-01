@@ -1,0 +1,296 @@
+\documentclass[11pt]{article}
+
+\let\Horig\H
+
+\newcommand{\ignore}[1]{}
+
+\usepackage{amssymb,amsmath}
+
+\usepackage{enumerate}
+
+\usepackage{url}
+
+\usepackage{xcite}
+
+\externalcitedocument{m}
+
+\usepackage{xr} % [cross-referencing] 
+
+\externaldocument[Z-]{m} % [cross-referencing] 
+
+% \usepackage{xc} % [cross-referencing] 
+% \externalcitedocument[AA-]{responses} % [cross-referencing] 
+
+\makeatletter
+\long\def\XR@test#1#2#3#4\XR@{%
+  \let\XR@next\@gobbletwo
+  \ifx#1\newlabel
+    \let\XR@next\@firstoftwo%
+  \else\ifx#1\@input
+     \let\XR@next\@secondoftwo
+  \fi\fi
+   \XR@next{\newlabel{\XR@prefix#2}{#3}}{\edef\XR@list{\XR@list#2\relax}}%
+  \ifeof\@inputcheck\expandafter\XR@aux
+  \else\expandafter\XR@read\fi}
+\makeatother
+
+\usepackage{color}
+
+\usepackage{xcolor}
+\definecolor{ForestGreen}{RGB}{34,139,34}
+\definecolor{mauve}{rgb}{0.7,0,0.43}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darkorange}{rgb}{1.0, 0.55, 0.0}
+\definecolor{lightblue}{rgb}{0,0.2,0.5}
+\definecolor{blue1}{rgb}{0,0.1,0.9}
+
+\definecolor{lightblue}{rgb}{0,0.2,0.5}
+
+\usepackage{soul}
+\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
+\allowdisplaybreaks
+
+\usepackage[colorlinks=true, urlcolor=lightblue,linkcolor=lightblue, citecolor=lightblue]{hyperref}
+
+\usepackage{accsupp}    
+
+\newcommand{\refb}[1]{\ref*{#1}}
+
+\newcommand{\eqrefb}[1]{(\ref*{#1})}
+
+\newcommand{\noncopynumber}[1]{
+    \BeginAccSupp{method=escape,ActualText={}}
+    #1
+    \EndAccSupp{}
+}
+
+\usepackage{listings}
+\lstset{ % 
+  xleftmargin=3.4pt, % 3.4pt,
+  xrightmargin=3.4pt,
+  language=C,                % the language of the code 
+  basicstyle=\tiny\ttfamily, % \scriptsize\ttfamily, % \footnotesize,           % the size of the fonts that are used for the code 
+%  basicstyle=\ttfamily,
+  numbers=left, % none,                   % where to put the line-numbers
+  numberstyle=\tiny\color{gray}\noncopynumber,  % the style that is used for the line-numbers 
+ stepnumber=2,                   % the step between two line-numbers. If it's 1, each line 
+                                  % will be numbered 
+  numbersep=5pt,                  % how far the line-numbers are from the code 
+  backgroundcolor=\color{white},      % choose the background color. You must add \usepackage{color} 
+  showspaces=false,               % show spaces adding particular underscores 
+  showstringspaces=false,         % underline spaces within strings 
+  showtabs=false,                 % show tabs within strings adding particular underscores 
+  frame=single,                   % adds a frame around the code 
+  rulecolor=\color{black},        % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. commens (green here)) 
+  tabsize=2,                      % sets default tabsize to 2 spaces 
+  captionpos=b,                   % sets the caption-position to bottom 
+  breaklines=true,                % sets automatic line breaking 
+  breakatwhitespace=true, % false,        % sets if automatic breaks should only happen at whitespace 
+  title=\lstname,                   % show the filename of files included with \lstinputlisting; 
+                                  % also try caption instead of title 
+  keywordstyle=\color{blue1},          % keyword style 
+  commentstyle=\color{dkgreen},       % comment style 
+  stringstyle=\color{mauve},         % string literal style 
+  escapeinside={\%*}{*)},            % if you want to add a comment within your code 
+  morekeywords={*,...},               % if you want to add more keywords to the set 
+  columns=fullflexible,
+  upquote
+}
+
+\usepackage[normalem]{ulem}
+
+% \usepackage[round,sort,comma,numbers]{natbib}
+% \bibpunct{\textcolor{lightblue}{(}}{\textcolor{lightblue}{)}}{,}{a}{}{;}
+% \let\oldcitet=\citet
+% \let\oldcitep=\citep
+% \renewcommand{\cite}[1]{\textcolor[rgb]{0,0,1}{\oldcitet{#1}}}
+% \renewcommand{\citet}[1]{\textcolor[rgb]{0,0,1}{\oldcitet{#1}}}
+% \renewcommand{\citep}[1]{\textcolor[rgb]{0,0,1}{\oldcitep{#1}}}
+
+% \numberwithin{equation}{section}
+
+\newenvironment{Proof}{\removelastskip\par\medskip
+\noindent{\em Proof.} \rm}{\penalty-20\null\hfill$\square$\par\medbreak}
+
+\def\div{{\mathord{{\rm div}}}}
+\def\Ad{{\mathord{{\rm Ad}}}}
+\def\ad{{\mathord{{\rm ad}}}}
+\def\trace{{\mathord{{\rm trace ~}}}}
+\def\ric{{\mathord{{\rm ric}}}}
+\def\so{{\mathord{{\rm so}}}}
+\def\realic{{\mathord{{\rm Ric}}}}
+\def\Id{{\mathord{{\rm Id}}}}
+\def\diff{{\mathord{{\rm Diff}}}}
+\def\real{{\mathord{{\rm I\kern-2.8pt R}}}}        % Fake blackboard bold R.
+\def\inte{{\mathord{{\rm I\kern-2.8pt N}}}}
+\def\PP{{\mathord{{\rm I\kern-2.8pt P}}}}
+\def\ii{{\mathord{{\rm {\Im}}}}}
+\def\G{{\mathord{{\sl {\sf G}}}}}
+
+\def\real{{\mathord{\mathbb R}}}
+\def\bbr{{\mathord{\mathbb R}}}
+\def\inte{{\mathord{\mathbb N}}}
+\def\z{{\mathord{\mathbb Z}}}
+\def\qu{{\mathord{\mathbb Z}}}
+\def\H{{\mathord{\mathbb H}}}
+\def\HB{{\mathord{\mathbb{\bf H}}}}
+\def\calf{{\cal F}}
+\newcommand{\dee}{\mbox{$I  \! \! \! \, D$}}
+\def\Cov{{\mathrm{{\rm Cov}}}}
+\def\Var{{\mathrm{{\rm Var}}}}
+\def\R{\right}
+\def\L{\left}
+\def\realef#1{(\ref{#1})}
+
+\newcommand{\simgeq}{\;
+\raisebox{-0.4ex}{\tiny$\stackrel{{\textstyle>}}{\sim}$}\;}
+\newcommand{\simleq}{\;
+\raisebox{-0.4ex}{\tiny$\stackrel{{\textstyle<}}{\sim}$}\;}
+\newcommand{\theor}{{\bf Theorem}}
+\newcommand{\Prop}{{\bf Proposition}}
+\newcommand{\etape}{{\bf Step}}
+\newcommand{\rem}{{\bf Remark:}}
+\newcommand{\rems}{{\bf Remarks:}}
+\newcommand{\ex}{{\bf Example:}}
+\newcommand{\demo}{{\bf Proof:}}
+\newcommand{\CQFD}{\nolinebreak\hfill\rule{2mm}{2mm}\medbreak\par}
+\newcommand{\lem}{{\bf Lemma }}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\sgn}{\mathrm{sign }\:}
+\newcommand{\disp}{\displaystyle}
+\newcommand{\cvar}{\stackrel{var}{\longrightarrow}}
+\newcommand{\lto}{\longrightarrow}
+\newcommand{\e}{\varepsilon}
+\newcommand{\s}{\sigma}
+\newcommand{\om}{\omega}
+
+\def\rit{\mathbb{R}}
+\def\cit{\mathbb{C}}
+\def\nit{\mathbb{N}}
+\def\zit{\mathbb{Z}}
+\def\qit{\mathbb{Q}}
+\def\dit{\mathbb{D}}
+\def\Eit{\mathbb{E}}
+\def\pit{\mathbb{P}}\def\P{\mathbb{P}}
+\def\E{\mathop{\hbox{\rm I\kern-0.20em E}}\nolimits}
+\def\Var{\mathop{\hbox{\rm Var}}\nolimits}
+\def\Cov{\mathop{\hbox{\rm Cov}}\nolimits}
+
+\def\cqfd{\hbox{\rule{2.5mm}{2.5mm}}}
+
+\def\court {\hskip 5pt}
+\def\med{\hskip 10pt}
+\def\lng{\hskip 20pt}
+
+
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{lemma}[prop]{Lemma}
+\newtheorem{definition}[prop]{Definition}
+\newtheorem{corollary}[prop]{Corollary}
+\newtheorem{theorem}[prop]{Theorem}
+\newtheorem{remark}[prop]{Remark}
+\def\Dom{\rm Dom \ \! }
+\def\trace{{\mathrm{{\rm trace}}}}
+\def\Ent{{\mathrm{{\rm Ent}}}}
+\def\var{{\mathrm{{\rm var}}}}
+\def\div{{\mathrm{{\rm div}}}}
+
+\textwidth16cm
+\textheight22.5cm
+\oddsidemargin-0.1cm
+\evensidemargin-0.1cm
+\topmargin0cm
+\headheight0cm
+\headsep0cm
+\baselineskip1in
+\parindent0.2in
+
+\begin{document}
+
+\pagestyle{empty} 
+
+\begin{center} 
+\large{Responses to Reviewer 1} % \#1}
+\\ 
+\end{center}
+
+\noindent 
+% We thank the referee for the many insightful comments and recommendations that have helped us in producing this revision.
+
+\noindent
+\begin{description}
+\item 
+Q1: Is it possible/worthwhile to provide a moment formula before discussing
+the combinatorics?
+Truth be told, my personal feeling upon reading this paper is that I had spent
+a lot of time parsing sections 2-3 (understanding the notation and definitions
+and propositions; I will come back to this later) before finally arriving at a first formula for moments of graph count (Proposition 4.1). In fact, this formula, as
+well as Proposition 4.2, can be presented in a way that is easily understood by
+an average probabilist like myself, without using the heavy notations in sections
+2-3. Indeed, non-flat partition corresponds to identifying vertices, and edges are
+independent once vertices are fixed. Presenting Proposition 4.1 and 4.2 before
+sections 2-3 would motivate the introduction of connected partitions and their
+connection with virtual cumulants (no pun intended).
+\item
+  Q2: Is it possible to be more precise about the combinatorial arguments?
+The essence of the paper seems to revolve around two combinatorial estimates in Lemma 2.8 along with the idea of connecting partitions and cumulants.
+After spending a substantial amount of time, I fail to understand Equation (3).
+Starting from a non-flat connected partition for an array of shape $n \times r$
+and
+moving towards building a non-flat connected partition for an array of shape
+$(n + 1) \times r$, it seems that one has to decide which row index will be the added r vertices. Then, for each added vertex, one has to decide which block it belongs
+to (or if it is isolated). Since there are O(nr) blocks (a trivial upper bound, but
+it does not seem easy to find a better bound), the number of possible ways of
+``expanding from $n$ to $n + 1$'' is at most $O(n(nr)r ) = O(nr+1 )$
+(considering large
+n asymptotics with $r$ fixed). Would it be possible to provide more details in
+proving the claimed O(nr ) bound (second display on page 8)?
+
+\end{description} 
+
+\newpage
+
+\begin{center} 
+\large{Responses to Reviewer 2} % \#1}
+\\ 
+\end{center}
+
+\noindent 
+% We thank the referee for the many insightful comments and recommendations that have helped us in producing this revision.
+
+% \medskip
+
+\begin{itemize}
+  \item 
+ I recommend to include a few more references to papers where the method of cumulants has already successfully been applied in stochastic geometry. A good overview can be found in the survey article [DJS22].
+\item  When discussing cumulant bounds for subgraph counts it might be worth mentioning that for the
+ Erd{\Horig o}s-R\'enyi graph 
+ random graph model optimal (!) bounds are available from the booklet of Féray, Méliot and Nikeghbali.
+\item  Whenever the random geometric graph is mentioned, do you need to assume that in the connection function also
+  $\Vert x - y \Vert> 0$,
+  or is this automatically satisfied by some other assumptions?
+      \item I wonder why the reference [ST23] is not included in the discussion at the bottom of page 3.
+  \item  page 10: When Poisson processes are introduced I guess that some assumptions on the intensity measure are necessary (such as being $\sigma$-finite).
+  \item  page 10: Given the description of the space $\Omega$ it is not clear to me why the authors mention Corollary 6.5 of [LP18] here, because the claim seems to be part of the definition used here.
+  \item  page 10: Do you need further conditions for (10) to be valid, for example is finiteness of the integral sufficient?
+  \item  page 11: Same question for (11).
+  \item  page 11/12: If might be a good ideal to briefly recall $\Xi$.
+  \item  page 12, line 4: Change geometric to geometry.
+  \item  page 12: Maybe the authors would like to give a reference to the textbook on random geometric graphs at this place.
+  \item  page 13, line 3: On the connection function?
+  \item  page 13: What is the meaning of µ in (16)? Also, is this the same as in the example thereafter?
+  \item  page 13: You refer to Example 6, a number which does not exist.
+  \item  page 13: In the example at the bottom of the page you assume µ to be Radon. Why and why is this assumption not used before?
+  \item  page 13: In the same example, is it really possible to allow
+    $A_\lambda$ be so general that not even $A_\lambda \uparrow \real^d$?
+  \item  page 14: It should be $x, y \in \real^d$ in Definition 6.1.
+  \item  page 19: Is it correct to speak of $1/(4r - 2)$ as a rate? To me, this is at most the exponent of the rate. Maybe this can be skipped entirely.
+  \item  page 20 and below: It should be the appendix if you refer to the appendix.
+  \item  page 20: First, you should say where $x$ in (30) comes from. Moreover, I guess that $x$ should appear on both sides of the equation.
+  \item  page 22: When it comes to the discussion of Corollary 8.3 there is also the paper of Reitzner and coauthors on the Gilbert graph that could be mentioned here.
+  \item  page 23: If possible, a reference to both sources [SS91] and [DJS22] should be given for each item.
+\end{itemize}
+
+\end{document}
+
