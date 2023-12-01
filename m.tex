@@ -1983,7 +1983,7 @@ F(\rho ):=
 
  \medskip
 
- In the case where the connection function $H$ is given by $H(x,y) := \bone_{\{\|x-y\|\leq R\}}$ for some $R>0$, the resulting graph is completely determined by the geometric of the underlying point process $\Xi$, and is called a random geometric graph,
+ In the case where the connection function $H$ is given by $H(x,y) := \bone_{\{\|x-y\|\leq R\}}$ for some $R>0$, the resulting graph is completely determined by the \textcolor{red}{geometry} of the underlying point process $\Xi$, and is called a random geometric graph, \textcolor{red}{see \cite{penrosebk} for more details,}
  which is included as a special case in this paper. The main case of interest in this section is general RCM. We shall have further discussion about the random geometric graph in Section~\ref{rgg}, as we believe it is of independent interest. 
 % $G_r(\Xi)$.
 % Note for a set $A$, we write $|A|$ for its cardinality, and for $x\in\R^d$, denote by $\|x\|$ its Euclidean norm. In the case when $\Xi$ a binomial point process with $n$ points and $H(x,y)\equiv p$ for some $0<p<1$, edges are added independently between $n$ vertices despite their locations. The resulting graph obtained is so-called Erd\"os-R\'enyi graph $G_n(p)$. So one can regard the RCM as a combination of two classical models in random graph theory, Erd\"os-R\'enyi graph and random geometric graph, see \cite{LNS21,CanTrinh22} for some recent developments. 
@@ -2097,19 +2097,19 @@ H(x_{\eta_1},x_{\eta_2})
 \noindent 
 In this section we consider the following assumption,
 where $(\Lambda_\lambda)_{\lambda >0}$ is a family 
-of intensity measures on $\real^d$ and $H(x,y)$ is
-on the connection function.
+of intensity measures on $\real^d$ and $H(x,y)$ \textcolor{red}{is
+ a connection function.}
 \begin{assumption}
 \label{a61} 
  Let $r\geq 2$ and $n \geq 1$.
- There exist constants $c_H, C_{\mu , H} > 0$
+ There exist constants $c_H, \textcolor{red}{C_H} > 0$
 % and a function $\lambda \mapsto f_\lambda \in (0,\infty )$
  such that 
  for any connected non-flat partition 
  $\rho \in \Pi_{\widehat{1}} ( [n] \times [r])$, we have 
 \begin{equation}
 \label{integ-connecting3}
-  c_H^{|E(\rho_G)|} ( \lambda C_{\mu , H} )^{|V(\rho_G)|}
+  c_H^{|E(\rho_G)|} ( \lambda \textcolor{red}{C_H} )^{|V(\rho_G)|}
 \leq     \int_{\R^d}\cdots\int_{\R^d}
 \Bigg(
 \prod_{\{i,j\}\in E(\rho_G) }H(x_i,x_j)
@@ -2154,10 +2154,10 @@ hence
   \Bigg)
   \prod_{k\in V(\rho_G) } \mu (dx_k), 
 \end{eqnarray*}
-so that we can take $C_{\mu , H} := \mu (B)$. 
+so that we can take $\textcolor{red}{C_H} := \mu (B)$. 
 \end{example}
-The setting of Example~\ref{examplea}
- includes the following long and short range dependence examples: 
+The setting of \textcolor{red}{Example~\ref{examplea}
+ includes} the following long and short range dependence examples: 
 \begin{enumerate}[i)]
 \item
  the power-law fading kernel 
@@ -2168,7 +2168,7 @@ The setting of Example~\ref{examplea}
  the Boolean kernel $H(x,y)=\bone_{\{\|x-y\|\leq R \}}$, $x,y\in \real^d$,
  for some $R >0$, which yields the random geometric graph, with
 % $B$ the centered ball of radius $r/2$ in $\real^d$, and
- $C_{\mu , H} = v_d (R /2)^d$,
+ $\textcolor{red}{C_H} = v_d (R /2)^d$,
  where $v_d$ denotes the volume of the unit ball in $\real^d$. 
 \end{enumerate}
 % \smallskip
@@ -2187,10 +2187,10 @@ $$\Lambda_\lambda (\mathrm{d}x)= {\bf 1}_{A_\lambda} (x) \mu(\mathrm{d}x),\qquad
   and the kernel function $H : \real^d\times \real^d \to [0,1]$
   is lower bounded as $H(x,y) \geq c_H$, $x,y\in \real^d$ for some $c_H>0$,
   Assumption~\ref{a61} is satisfied with 
-  $\mu ( A_\lambda ) = C_{\mu , H} \lambda$,
+  $\mu ( A_\lambda ) = \textcolor{red}{C_H} \lambda$,
   e.g. when $A_\lambda$ is  the ball of radius $\lambda^{1/d} >0$
   and $\mu$ is the Lebesgue measure on $\real^d$,
-  with $C_{\mu , H} = v_d$. 
+  with $\textcolor{red}{C_H} = v_d$. 
 \end{example} 
 
 % \medskip
