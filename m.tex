@@ -453,8 +453,7 @@ significant interest in the random graph literature.
  In this paper, we derive normal approximation rates under a mild condition
  on the connection function $H(x,y)$ of the random-connection model,
  by deriving growth rates of cumulants written as sums over
- connected partitions, see Propositions~\ref{t1} and \ref{th6.4}. 
- To the best of our knowledge, this is the first time that the normal approximation
+ connected partitions, see Propositions~\ref{t1} and \ref{th6.4}.  \textcolor{red}{Related cumulant bounds have been obtained in the {E}rd{\Horig{o}}s-{R}\'enyi model, cf. Proposition~10.1.2 in \cite{feray}. However,} to the best of our knowledge, this is the first time that the normal approximation
  of subgraph counts with convergence rates is established
  in the random-connection model.
  
@@ -481,16 +480,13 @@ Statulevi\v{c}ius condition,
  and moderate deviation principles, see
  \cite{saulis},
  \cite{doring},
- \cite{doering}. 
- In \cite{grotethale18,thale18}, this method has been used to 
- derive concentration inequalities,
- normal approximation with error bounds,
- and moderate deviation principles for random polytopes.
+ \cite{doering}. \textcolor{red}{In stochastic geometry, the method of cumulant has also been applied to Poisson cylinder processes \cite{heinrich09}, the volumes of simplices in Poisson-Delaunay tessellations \cite{thale21}, the Boolean model \cite{heinrich} and the random $m$-dependent fields \cite{gotze95}.} In \cite{grotethale18,thale18}, 
+ this method has been used to derive concentration inequalities, normal approximation with error bounds, and moderate deviation principles for random polytopes. \textcolor{red}{For a more detailed overview, we refer the survey \cite{doering}.}
  
 \medskip 
  
 Given $\mu$ a % finite
-diffuse Radon measure on $\R^d$,
+diffuse \textcolor{red}{$\sigma$-finite} measure on $\R^d$,
  we consider a random-connection model
  based on an underlying Poisson point process $\Xi$ on $\R^d$
  with intensity of the form $\lambda\mu(\mathrm{d}x)$, in which 
@@ -1824,7 +1820,7 @@ measure $\Lambda$ on $\real^d$, % =\lambda\mu(\cdot)$, where $\mu$ is a probabil
  $\omega \in \Omega$ are identified with the Radon point measures 
  $\displaystyle \omega = \sum_{x\in \omega} \epsilon_x$, 
  where $\epsilon_x$ denotes the Dirac measure at $x\in \R^d$. 
- By \cite[Corollary~6.5]{LastPenrose17}, almost every
+ \textcolor{red}{As in} \cite[Corollary~6.5]{LastPenrose17}, almost every
  element $ \omega$ of $\Omega$ 
  can be represented as $\omega =\{V_i\}_{1\leq i\leq N}$,
  where $(V_i)_{i\geq 1}$ is a random sequence 
@@ -1840,7 +1836,7 @@ measure $\Lambda$ on $\real^d$, % =\lambda\mu(\cdot)$, where $\mu$ is a probabil
  \sum_{V_1,\dots,V_r \in\Xi} \ u_G (V_1,\ldots , V_r ) 
  = \int_{(\real^d)^r} u_G (x_1,\ldots , x_r ) \omega (dx_1)\cdots \omega (dx_r), 
 \end{equation} 
- where $u_G (x_1,\ldots , x_r )$ is a measurable process of the form 
+ where $u_G (x_1,\ldots , x_r )$ is a \textcolor{red}{bounded} measurable process of the form 
 $$
  u_G (x_1,\ldots , x_r ) := \prod_{\{i,j\} \in E(G)} v_{i,j}(x_i,x_j), 
 $$
@@ -1973,7 +1969,7 @@ F(\rho ):=
  \nonumber %  \label{integ-connecting}
 0<\int_{\real^d}H(x,y) \Lambda(dx)< \infty, 
 \end{equation}
- for all $y \in\R$. 
+ for all $y \in\R$. \textcolor{red}{Recall that $\Xi$ is a Poisson point process on $\R^d$, $d \geq 1$, with intensity measure $\Lambda$.}
  Given $\omega \in \Omega$, for any $x,y\in\omega$ with $x\not= y$,
  an edge connecting $x$ and $y$ is added with probability $H(x,y)$,
  independently of the other pairs, and in this case we write $x \leftrightarrow y$.
@@ -2156,7 +2152,7 @@ hence
 \end{eqnarray*}
 so that we can take $\textcolor{red}{C_H} := \mu (B)$. 
 \end{example}
-The setting of \textcolor{red}{Example~\ref{examplea}
+The setting of \textcolor{red}{the above increasing intensity example, Example~\ref{examplea},
  includes} the following long and short range dependence examples: 
 \begin{enumerate}[i)]
 \item
@@ -2183,7 +2179,7 @@ $$\Lambda_\lambda (\mathrm{d}x)= {\bf 1}_{A_\lambda} (x) \mu(\mathrm{d}x),\qquad
   where $(A_\lambda )_{\lambda >0}$ is a non-decreasing sequence
   of Borel subsets of $\real^d$, 
   $\mu$ a % finite
-  diffuse Radon measure on $\R^d$, 
+  diffuse \textcolor{red}{$\sigma$-finite measure} on $\R^d$, 
   and the kernel function $H : \real^d\times \real^d \to [0,1]$
   is lower bounded as $H(x,y) \geq c_H$, $x,y\in \real^d$ for some $c_H>0$,
   Assumption~\ref{a61} is satisfied with 
@@ -2567,7 +2563,7 @@ of order $\alpha     -(\alpha - 1)r>0$
 in \eqref{cumulant-rhop2-0} for trees in the sparse regime
 with $\alpha \in [1, r/(r-1) )$,
 while in the case of non-tree graphs such as
-cycle graphs the growth rate
+cycle graphs the growth rate \textcolor{red}{exponent}
 $r - \alpha |E(G)|
 \leq ( 1 - \alpha ) r \leq 0$
 is negative or zero in \eqref{cumulant-rhoph1} and \eqref{cumulant-rhoph2}. 
@@ -3710,7 +3706,7 @@ $$
 \big| \P \big( \widetilde{N}_G \leq x \big) - \Phi(x) \big| \leq
 C \lambda^{ - 1/(4r - 2)},
 \end{equation}
- with rate $1/(4r -2)$ as $\lambda$ tends to infinity, where $C>0$ depends only on $H$ and $G$.
+ with rate \textcolor{red}{exponent} $1/(4r -2)$ as $\lambda$ tends to infinity, where $C>0$ depends only on $H$ and $G$.
 \end{corollary}
 \begin{Proof}
    In the dilute regime, the cumulant bound 
@@ -3723,7 +3719,7 @@ C \lambda^{ - 1/(4r - 2)},
  the centered and normalized subgraph count
  $\widetilde{N}_G$ 
  satisfies the {Statulevi\v{c}ius condition}
- \eqref{Statuleviciuscond2} in appendix, see \cite{rudzkis,doering},
+ \eqref{Statuleviciuscond2} in \textcolor{red}{the} appendix, see \cite{rudzkis,doering},
  with $\gamma := r-1$. 
  We conclude by applying Corollary~\ref{t1-c}
  and Lemma~\ref{l1}-$i)$ with $\gamma :=r-1$
@@ -3754,7 +3750,7 @@ C \lambda^{ - (
 \begin{Proof}
   This is a consequence of 
   Corollary~\ref{th6.4-c}-$a)$
-  and Lemma~\ref{l1}-$i)$ in appendix,
+  and Lemma~\ref{l1}-$i)$ in \textcolor{red}{the} appendix,
   with $\gamma :=r-1$ and 
   $\Delta_\lambda:=
   (K \lambda )^{ - (
@@ -3764,7 +3760,7 @@ C \lambda^{ - (
 \end{Proof} 
   We note that  up to division by $2r - 1$,
    the rate in \eqref{fjkldsa1} is consistent  
- with the rate $(
+ with the rate \textcolor{red}{exponent} $(
  \alpha    -(\alpha - 1)r 
      ) / 2$ obtained for the counting of trees in the
  Erd{\H o}s-R\'enyi graph, cf. Corollary~4.10 of \cite{PS2}. 
@@ -3785,7 +3781,7 @@ Corollaries~4.8-4.9 of \cite{PS2}.
 
  Taking $\Delta_\lambda = \sqrt{K \lambda}$, 
 % in Examples~\ref{examplea}-\ref{exampleb} above, 
- by Lemma~\ref{l1}-$ii)$ in appendix, see Theorem~1.1 of \cite{doring},
+ by Lemma~\ref{l1}-$ii)$ in \textcolor{red}{the} appendix, see Theorem~1.1 of \cite{doring},
 we have the following result. 
 \begin{corollary} % [Moderate deviation]
   \label{c01-2-0}
@@ -3797,7 +3793,7 @@ we have the following result.
   with speed $a_\lambda^2 = o( \lambda^{1/(2r - 1)} )$ and rate function $x^2/2$.
 \end{corollary}
 In addition,
-by Lemma~\ref{l1}-$iii)$ in appendix,
+by Lemma~\ref{l1}-$iii)$ in \textcolor{red}{the} appendix,
 see the corollary of \cite[Lemma~2.4]{saulis},
 for any $x\ge0$ and sufficiently large $\lambda$,
 for some constant $K>0$ 
@@ -3806,8 +3802,9 @@ we have the concentration inequality
 \label{concentrationineq}
   \P \big( \big| \widetilde{N}_G \big|
   \geq x)\le2\exp\left(-
-  \frac{1}{4} 
-   ( K \lambda)^{1/r}
+  \frac{1}{4} \textcolor{red}{\min\left\{\frac{x^2}{2^r},
+   \left( x\sqrt{K \lambda}\right)^{1/r}\right\}
+  }
    \right), 
 \end{equation} 
 in agreement with the rate in Theorem~1.1 of \cite{bachmann},
@@ -3965,7 +3962,7 @@ $c)$
  which similarly yields the lower bounds in 
  \eqref{b1}-\eqref{b3}.
 \end{Proof}
- The next result is a direct consequence of Proposition~\ref{thm8}. 
+ The next result is a direct consequence of Proposition~\ref{thm8}. \textcolor{red}{We notice that the asymptotic behavior of the expectation and the variance of subgraph in random geometric graph was also obtained in \cite{bachmann}.}
 \begin{corollary}
     \label{thm8-0}
  Let $G$ be a connected graph with $|V(G)|=r$ vertices, $r\geq 2$.
@@ -4035,8 +4032,7 @@ C
 We note that Berry-Esseen convergence rates have been obtained
 for certain random functionals in the random geometric graph
 model, including total edge lengths in \cite[Corollary~4.3]{schulte},
-clique counts using Poisson U-statistics in \cite[Theorem~4.1]{reitzner}  
-and using stabilizing functionals in \cite[Theorem~3.15]{lachiezerey4},
+clique counts using Poisson U-statistics in \cite[Theorem~4.1]{reitzner}, and using stabilizing functionals in \cite[Theorem~3.15]{lachiezerey4},
 and $k$-hop counts in the one-dimensional unit disk model in
 \cite[Proposition~8.1]{privaultkhops}. 
 % \textcolor{purple}{ Rates of normal convergence with respect to the Kolmogorov distance have been obtained for subgraph counts on random geometric graphs in \cite{schulte} using Poisson U-statistics, see also \cite{lachiezerey4} using stabilizing functionals. } 
@@ -4054,7 +4050,7 @@ Corollary~\ref{jdkj10} with $\Delta_\lambda=
     satisfies a moderate deviation principle
 with rate function $x^2/2$
 and speed $a_\lambda^2 = o( \lambda^{1/(2r - 1)} )$
-in the setting of Lemma~\ref{l1}-$ii)$ in appendix,
+in the setting of Lemma~\ref{l1}-$ii)$ in \textcolor{red}{the} appendix,
 and the concentration inequality 
 \eqref{concentrationineq} holds by Lemma~\ref{l1}-$iii)$. 
 
@@ -4085,7 +4081,7 @@ The following results are summarized from the ``main lemmas'' in Chapter~2 of \c
 \end{equation}
 for some constant $C>0$ depending only on $\gamma$.
 \item (Moderate deviation principle,
-  see \cite[Theorem~1.1]{doring}).
+  \cite[Theorem~1.1]{doring} \textcolor{red}{and \cite[Theorem~3.1]{doering}}).
   Let $( a_\lambda )_{\lambda > 0}$ be a sequence of real numbers tending to infinity, and such that 
   $$
   \lim_{\lambda \to \infty}
@@ -4095,10 +4091,10 @@ for some constant $C>0$ depending only on $\gamma$.
   % as $\lambda\to\infty$.
   Then, $ (a_\lambda^{-1}X_\lambda)_{\lambda >0}$ satisfies a moderate deviation principle with speed $a_\lambda^2$ and rate function $x^2/2$. 
 \item (Concentration inequality,
-  corollary of \cite[Lemma~2.4]{saulis}).
+  corollary of \cite[Lemma~2.4]{saulis} \textcolor{red}{and \cite[Theorem~2.5]{doering}}).
   For any $x\ge0$ and sufficiently large $\lambda$, 
 \begin{equation}
-\IP(|X_\lambda|\geq x)\le2\exp\left(-\frac14\min\left( \frac{x^2}{2^{1/(1+\gamma)}},(x\Delta_\lambda)^{1/(1+\gamma)}\right) \right).
+\IP(|X_\lambda|\geq x)\le2\exp\left(-\frac14\min\left( \frac{x^2}{2^{\textcolor{red}{1+\gamma}}},(x\Delta_\lambda)^{1/(1+\gamma)}\right) \right).
 \end{equation} 
 % \item (Normal approximation with Cram\'er corrections, \cite[Lemma~2.3]{saulis}). There exists a constant $c>0$ such that for all $\lambda \geq 1$ and $x\in(0,c(\Delta_\lambda)^{1/(1+2\gamma)})$ we have 
 % \begin{eqnarray*} \frac{\IP(X_\lambda\geq x)}{1-\Phi(x)}&=& \left(1+O\left(\frac{x+1}{(\Delta_\lambda)^{1/(1+2\gamma)}}\right)\right) \exp \big( \tilde{L}(x) \big), \\ \frac{\IP(X_\lambda\leq -x)}{\Phi(-x)}&=& \left(1+O\left(\frac{x+1}{(\Delta_\lambda)^{1/(1+2\gamma)}}\right)\right) \exp \big( \tilde{L}(-x) \big), \end{eqnarray*} where $\tilde{L}(x)$ is related to the Cram\'er-Petrov series. 
@@ -4219,10 +4215,21 @@ P.~Eichelsbacher and C.~Th{\"a}le.
   random measures.
 \newblock {\em Electron. J. Probab.}, 19:no. 102, 25, 2014.
 
+\textcolor{red}{
+\bibitem[FMN16]{feray}
+V.~F\'erary, P.-L.~M\'eliot, and A.~Nikghbali. 
+\newblock {\em Mod-$\phi$ convergence.} Springer Briefs in Probability and Mathematical Statistics. Springer, Cham, 2016.
+}
+
 \bibitem[Gil59]{G}
 E.N. Gilbert.
 \newblock Random graphs.
 \newblock {\em Ann. Math. Statist}, 30(4):1141--1144, 1959.
+
+\textcolor{red}{
+\bibitem[GHH95]{gotze95}
+F.~G\"otze, L.~Heinrich, and C.~Hipp. $m$-dependent random fields with analytic cumulant generating function. {\em Scand. J. Statist.}, 22:183--195, 1995. 
+}
 
 \bibitem[GT18a]{grotethale18}
 J.~Grote and C.~Th{\"a}le.
@@ -4234,6 +4241,18 @@ J.~Grote and C.~Th{\"a}le.
 J.~Grote and C.~Th{\"a}le.
 \newblock Gaussian polytopes: a cumulant-based approach.
 \newblock {\em Journal of Complexity}, 47:1--41, 2018.
+
+\textcolor{red}{
+\bibitem[GT21]{thale21}
+  A.~Gusakova, and C. Th{\"a}le. \newblock The volume of simplices in high-dimensional Poisson-Delaunay tessellations.\newblock {\em Annales Henri Lebesgue}, 4: 121--153, 2021.  
+\bibitem[Hein05]{heinrich}L.~Heinrich 
+\newblock Large deviations of the empirical volume fraction for stationary Poisson grain models. 
+\newblock {\em Ann. Appl. Probab.}, 15:392--420, 2005.
+\bibitem[HS09]{heinrich09}
+L.~Heinrich and M.~Spiess. 
+\newblock Berry-Esseen bounds and Cram\'er-type large deviations for the volume distribution of Poisson cylinder processes. 
+\newblock {\em Lith. Math. J.}, 49:381--398, 2009.
+}
 
 \bibitem[Jan88]{Janson1988}
 S.~Janson.
@@ -4352,6 +4371,12 @@ M.~Penrose and J.E. Yukich.
 \newblock In {\em Stein's method and applications}, volume~5 of {\em Lect.
   Notes Ser. Inst. Math. Sci. Natl. Univ. Singap.}, pages 37--58. Singapore
   Univ. Press, Singapore, 2005.
+
+  % \textcolor{red}{
+  %   \bibitem[RST17]{reitzner17}
+  %   M.~Reitzner, M.~Schulte, and C.~Th\"ale. 
+  %   \newblock Limit theory for the Gilbert graph.\newblock {\em Adv. Appl. Math.}, 88: 26--61, 2017.
+  % }
 
 \bibitem[R{\"o}l22]{roellin2}
 A.~R{\"o}llin.
@@ -4528,6 +4553,12 @@ P.~Eichelsbacher and C.~Th{\"a}le.
 \newblock New {B}erry-{E}sseen bounds for non-linear functionals of {P}oisson
   random measures.
 \newblock {\em Electron. J. Probab.}, 19:no. 102, 25, 2014.
+
+
+\bibitem[FMN16]{feray}
+V.~Feray, P.-L.~Meliot, and A.~Nikeghbali. 
+\newblock Mod-$\phi$ convergence. 
+\newblock Springer Briefs in Probability and Mathematical Statistics. Springer, Cham, 2016.
 
 \bibitem[Gil59]{G}
 E.N. Gilbert.

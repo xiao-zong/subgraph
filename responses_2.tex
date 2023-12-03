@@ -247,6 +247,7 @@ it does not seem easy to find a better bound), the number of possible ways of
 n asymptotics with $r$ fixed). Would it be possible to provide more details in
 proving the claimed O(nr ) bound (second display on page 8)?
 
+\textcolor{cyan}{For more clarity, the proof of this result has been split into a new Lemma 2.6 and Lemma 2.9.}
 \end{description} 
 
 \newpage
@@ -264,21 +265,47 @@ proving the claimed O(nr ) bound (second display on page 8)?
 \begin{itemize}
   \item 
  I recommend to include a few more references to papers where the method of cumulants has already successfully been applied in stochastic geometry. A good overview can be found in the survey article [DJS22].
-\item  When discussing cumulant bounds for subgraph counts it might be worth mentioning that for the
- Erd{\Horig o}s-R\'enyi graph 
- random graph model optimal (!) bounds are available from the booklet of Féray, Méliot and Nikeghbali.
-\item  Whenever the random geometric graph is mentioned, do you need to assume that in the connection function also
-  $\Vert x - y \Vert> 0$,
-  or is this automatically satisfied by some other assumptions?
+ \begin{itemize}
+  \item Yes, we have added a few more references for stochastic geometry. 
+ \end{itemize}
+\item  When discussing cumulant bounds for subgraph counts it might be worth mentioning that for the Erd{\Horig o}s-R\'enyi graph random graph model optimal (!) bounds are available from the booklet of Féray, Méliot and Nikeghbali.\\
+ \begin{itemize}
+  \item The reference [FMN16] has been added on page 3.
+   \end{itemize}
+
+\item  Whenever the random geometric graph is mentioned, do you need to assume that in the connection function also $\Vert x - y \Vert> 0$, or is this automatically satisfied by some other assumptions?
+\begin{itemize}
+  \item $\Vert x - y \Vert> 0$ always holds in the subgraph counts because of the non-flat condition.
+\end{itemize}
+
       \item I wonder why the reference [ST23] is not included in the discussion at the bottom of page 3.
+\begin{itemize}
+\item The convergence rate in [ST23] is not optimal. 
+\end{itemize}      
   \item  page 10: When Poisson processes are introduced I guess that some assumptions on the intensity measure are necessary (such as being $\sigma$-finite).
+  \begin{itemize}
+  \item This condition has been added on page 13 and 16, while the intensity measure is assumed
+to be finite in other cases.
+  \end{itemize}
   \item  page 10: Given the description of the space $\Omega$ it is not clear to me why the authors mention Corollary 6.5 of [LP18] here, because the claim seems to be part of the definition used here.
+    \begin{itemize}
+  \item The word ``By" has been replaced with ``As in".
+  \end{itemize}
   \item  page 10: Do you need further conditions for (10) to be valid, for example is finiteness of the integral sufficient?
+  \begin{itemize}
+  \item We assume the integrand itself is bounded. 
+  \end{itemize}
   \item  page 11: Same question for (11).
+  \begin{itemize}
+  \item As above. 
+  \end{itemize}
   \item  page 11/12: If might be a good ideal to briefly recall $\Xi$.
+  \begin{itemize}
+  \item We have added a sentence to recall the definition of $\Xi$.
+  \end{itemize}
   \item  page 12, line 4: Change geometric to geometry.
   \begin{itemize}
-    \item Nailed. 
+    \item This correction has been made.
   \end{itemize}
   \item  page 12: Maybe the authors would like to give a reference to the textbook on random geometric graphs at this place.
   \begin{itemize}
@@ -286,7 +313,7 @@ proving the claimed O(nr ) bound (second display on page 8)?
   \end{itemize}
   \item  page 13, line 3: On the connection function?
   \begin{itemize}
-    \item We have deleted "on". It should be ``$H(x,y)$ is a connection funtion.'' 
+    \item We have deleted  ``on". It should be ``$H(x,y)$ is a connection funtion.'' 
   \end{itemize}
   \item  page 13: What is the meaning of µ in (16)? Also, is this the same as in the example thereafter?
   \begin{itemize}
@@ -294,17 +321,41 @@ proving the claimed O(nr ) bound (second display on page 8)?
   \end{itemize}
   \item  page 13: You refer to Example 6, a number which does not exist.
   \begin{itemize}
-    \item We have added the numbering for the example.
+    \item We have added the numbering for the example, and now we're referring to the ``increasing intensity example".
   \end{itemize}
-  \item  page 13: In the example at the bottom of the page you assume µ to be Radon. Why and why is this assumption not used before?
+  \item  page 13: In the example at the bottom of the page you assume $\mu$ to be Radon. Why and why is this assumption not used before?
+  \begin{itemize}
+  \item ``Radon" has been replaced with ``$\sigma$-finite", in agreement with the notation used elsewhere in the paper. 
+  \end{itemize}
   \item  page 13: In the same example, is it really possible to allow
     $A_\lambda$ be so general that not even $A_\lambda \uparrow \real^d$?
+    \begin{itemize}
+    \item In this example for the Assumption, $A_\lambda$ is taken to be a growing window such that $\mu(A_\lambda)=C_H \lambda$. In general, we always require $\lambda\to\infty$.
+    \end{itemize}
   \item  page 14: It should be $x, y \in \real^d$ in Definition 6.1.
+  \begin{itemize}
+  \item This point has been corrected.
+  \end{itemize}
   \item  page 19: Is it correct to speak of $1/(4r - 2)$ as a rate? To me, this is at most the exponent of the rate. Maybe this can be skipped entirely.
+  \begin{itemize}
+  \item ``Rate" has been changed into ``rate exponent" in several places. 
+  \end{itemize}
   \item  page 20 and below: It should be the appendix if you refer to the appendix.
+  \begin{itemize}
+    \item This point has been corrected.
+  \end{itemize}
   \item  page 20: First, you should say where $x$ in (30) comes from. Moreover, I guess that $x$ should appear on both sides of the equation.
+  \begin{itemize}
+    \item $x\ge0$ is any constant. Yes, $x$ should appear on both side. It has been fixed. 
+  \end{itemize}
   \item  page 22: When it comes to the discussion of Corollary 8.3 there is also the paper of Reitzner and coauthors on the Gilbert graph that could be mentioned here.
+  \begin{itemize}
+    \item We have added the reference. 
+  \end{itemize}
   \item  page 23: If possible, a reference to both sources [SS91] and [DJS22] should be given for each item.
+  \begin{itemize}
+    \item The references have been added. 
+  \end{itemize}
 \end{itemize}
 
 \end{document}
